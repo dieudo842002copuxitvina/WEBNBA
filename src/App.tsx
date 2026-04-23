@@ -45,6 +45,9 @@ import NewsPage from "@/pages/news/NewsPage";
 import DealerDirectoryPage from "@/pages/dealers/DealerDirectoryPage";
 import SolutionsPage from "@/pages/solutions/SolutionsPage";
 import ContactPage from "@/pages/contact/ContactPage";
+import IrrigationEstimatorPage from "@/pages/tools/IrrigationEstimatorPage";
+import FertigationPage from "@/pages/tools/FertigationPage";
+import AiDoctorPage from "@/pages/tools/AiDoctorPage";
 import CalculatorPage from "@/pages/tools/CalculatorPage";
 import CalculatorWizardPage from "@/pages/tools/CalculatorWizardPage";
 import HydraulicCalculatorPage from "@/pages/tools/HydraulicCalculatorPage";
@@ -111,6 +114,9 @@ const App = () => {
                   <Route path="/lien-he" element={<ContactPage />} />
                   <Route path="/cong-cu" element={<CalculatorHubPage />} />
                   <Route path="/cong-cu/tinh-toan" element={<CalculatorWizardPage />} />
+                  <Route path="/cong-cu/du-toan-tuoi" element={<IrrigationEstimatorPage />} />
+                  <Route path="/cong-cu/cham-phan" element={<FertigationPage />} />
+                  <Route path="/cong-cu/bac-si-ai" element={<AiDoctorPage />} />
                   <Route path="/cong-cu/tinh-toan-tuoi" element={<CalculatorPage />} />
                   <Route path="/cong-cu/tinh-toan-thuy-luc" element={<HydraulicCalculatorPage />} />
                   <Route path="/cong-cu/sut-ap" element={<HeadLossPage />} />

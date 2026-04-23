@@ -212,7 +212,7 @@ export default function CommandCenterHero() {
           </motion.div>
 
           {/* AGRICALC CARDS */}
-          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {TOOL_CARDS.map((tool, i) => (
               <motion.button
                 key={tool.key}

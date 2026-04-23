@@ -27,11 +27,12 @@ export default function AppShell({ children }: AppShellProps) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="pb-24 md:pb-8"
         style={{
           minHeight:
             'calc(100dvh - var(--header-h, 56px) - var(--bottomnav-h, 0px))',
           paddingBottom:
-            'calc(var(--bottomnav-h, 0px) + var(--safe-bottom, 0px))',
+            'calc(var(--bottomnav-h, 0px) + var(--safe-bottom, 0px) + 1.5rem)',
         }}
       >
         {children}

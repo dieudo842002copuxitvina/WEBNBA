@@ -34,7 +34,7 @@ export default function ZaloFAB({ href = '#', label = 'Chat Zalo' }: ZaloFABProp
       whileTap={{ scale: 0.94 }}
       className="group fixed right-4 z-40 flex items-center gap-2"
       style={{
-        bottom: 'calc(var(--bottomnav-h, 0px) + var(--safe-bottom, 0px) + 1rem)',
+        bottom: 'calc(var(--bottomnav-h, 5rem) + var(--safe-bottom, 0px) + 1.25rem)',
       }}
     >
       {/* Tooltip — appears on hover (desktop) */}

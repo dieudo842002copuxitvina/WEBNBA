@@ -1,109 +1,118 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Phone, MapPin, Mail, Clock } from 'lucide-react';
-import { toast } from 'sonner';
-import { useState } from 'react';
+import SeoMeta from '@/components/SeoMeta';
+import LeadCaptureForm from '@/components/LeadCaptureForm';
+
+const CONTACT_ITEMS = [
+  {
+    icon: Phone,
+    color: 'bg-[#2D5A27]/10 text-[#2D5A27]',
+    title: 'Hotline miễn phí',
+    main: '1900 636 899',
+    sub: 'Miễn phí cuộc gọi',
+    href: 'tel:1900636899',
+  },
+  {
+    icon: Mail,
+    color: 'bg-blue-50 text-blue-600',
+    title: 'Email',
+    main: 'info@nhabeagri.vn',
+    sub: 'Phản hồi trong 24h',
+    href: 'mailto:info@nhabeagri.vn',
+  },
+  {
+    icon: MapPin,
+    color: 'bg-[#FF6B00]/10 text-[#FF6B00]',
+    title: 'Văn phòng',
+    main: '123 Nguyễn Văn Linh, Q.7, TP.HCM',
+    sub: 'Thứ 2 – Thứ 7: 8:00 – 17:30',
+    href: undefined,
+  },
+  {
+    icon: Clock,
+    color: 'bg-emerald-50 text-emerald-600',
+    title: 'Zalo OA',
+    main: '@NhaBèAgri',
+    sub: 'Chat trực tiếp, hỗ trợ nhanh',
+    href: 'https://zalo.me/nhabeagri',
+  },
+];
 
 export default function ContactPage() {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [message, setMessage] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success('Cảm ơn bạn! Chúng tôi sẽ liên hệ lại sớm nhất.');
-    setName(''); setPhone(''); setMessage('');
-  };
-
   return (
-    <div className="container py-8">
-      <div className="animate-slide-up max-w-2xl">
-        <h1 className="font-display text-3xl font-bold mb-2">Liên hệ</h1>
-        <p className="text-muted-foreground mb-8">Liên hệ với Nhà Bè Agri để được tư vấn giải pháp nông nghiệp phù hợp</p>
+    <div className="container py-8 md:py-12 max-w-5xl">
+      <SeoMeta
+        title="Liên hệ Nhà Bè Agri — Tư vấn hệ thống tưới & phân bón"
+        description="Liên hệ đội kỹ thuật Nhà Bè Agri để được tư vấn giải pháp tưới nhỏ giọt, phân bón và hệ thống nước thông minh cho vườn cây ăn trái."
+        canonical="/lien-he"
+      />
+
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-[11px] uppercase font-bold tracking-wider text-[#2D5A27] mb-1">Liên hệ</p>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold" style={{ color: '#2D5A27' }}>
+          Nhận tư vấn <span style={{ color: '#5D4037' }}>miễn phí</span>
+        </h1>
+        <p className="text-muted-foreground mt-2 max-w-xl">
+          Đội kỹ thuật Nhà Bè Agri sẽ liên hệ lại trong 30 phút để tư vấn giải pháp phù hợp với vườn cây của bạn.
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Contact info */}
-        <div className="space-y-4">
-          <Card className="animate-slide-up">
-            <CardContent className="p-6 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <Phone className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-display font-semibold mb-1">Hotline</h3>
-                <a href="tel:1900636899" className="text-primary font-bold text-lg">1900 636 899</a>
-                <p className="text-xs text-muted-foreground mt-1">Miễn phí cuộc gọi</p>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="grid md:grid-cols-5 gap-6 md:gap-8">
+        {/* Left: Contact info */}
+        <div className="md:col-span-2 space-y-3">
+          {CONTACT_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Card key={item.title} className="border border-border/60 hover:border-[#2D5A27]/30 transition-colors">
+                <CardContent className="p-4 flex items-start gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.color}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">{item.title}</p>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        target={item.href.startsWith('http') ? '_blank' : undefined}
+                        rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        className="font-semibold text-sm text-[#2D5A27] hover:underline truncate block mt-0.5"
+                      >
+                        {item.main}
+                      </a>
+                    ) : (
+                      <p className="font-semibold text-sm mt-0.5">{item.main}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.sub}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
 
-          <Card className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-            <CardContent className="p-6 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-info/10 flex items-center justify-center shrink-0">
-                <Mail className="w-6 h-6 text-info" />
-              </div>
-              <div>
-                <h3 className="font-display font-semibold mb-1">Email</h3>
-                <p className="text-primary">info@nhabeagri.vn</p>
-                <p className="text-xs text-muted-foreground mt-1">Phản hồi trong 24h</p>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Response time badge */}
+          <div className="rounded-xl bg-[#FF6B00]/8 border border-[#FF6B00]/20 p-4">
+            <p className="text-sm font-bold text-[#FF6B00]">⚡ Cam kết phản hồi</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              Gửi yêu cầu → Đại lý gần bạn nhất liên hệ lại trong <strong>30 phút</strong> (giờ hành chính).
+            </p>
+          </div>
+        </div>
 
-          <Card className="animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <CardContent className="p-6 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                <MapPin className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h3 className="font-display font-semibold mb-1">Văn phòng</h3>
-                <p className="text-sm">123 Nguyễn Văn Linh, Q.7, TP.HCM</p>
-                <p className="text-xs text-muted-foreground mt-1">Thứ 2 – Thứ 7: 8:00 – 17:30</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="animate-slide-up" style={{ animationDelay: '300ms' }}>
-            <CardContent className="p-6 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6 text-success" />
-              </div>
-              <div>
-                <h3 className="font-display font-semibold mb-1">Zalo OA</h3>
-                <a href="https://zalo.me/nhabeagri" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold">@NhaBèAgri</a>
-                <p className="text-xs text-muted-foreground mt-1">Chat trực tiếp, hỗ trợ nhanh</p>
-              </div>
+        {/* Right: Lead Capture Form */}
+        <div className="md:col-span-3">
+          <Card className="border-2 border-[#2D5A27]/15 shadow-lg">
+            <CardContent className="p-5 md:p-7">
+              <h2 className="font-display text-xl font-bold mb-1" style={{ color: '#2D5A27' }}>
+                Gửi yêu cầu tư vấn
+              </h2>
+              <p className="text-xs text-muted-foreground mb-5">
+                Điền thông tin — đội kỹ thuật sẽ gọi lại cho bạn.
+              </p>
+              <LeadCaptureForm source="contact_page" compact={false} />
             </CardContent>
           </Card>
         </div>
-
-        {/* Contact form */}
-        <Card className="animate-slide-in-right">
-          <CardContent className="p-8">
-            <h2 className="font-display text-xl font-bold mb-6">Gửi yêu cầu tư vấn</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-1 block">Họ tên</label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Nguyễn Văn A" required className="h-12" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Số điện thoại</label>
-                <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="0901 234 567" required className="h-12" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Nội dung</label>
-                <Textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Mô tả nhu cầu của bạn..." rows={5} required />
-              </div>
-              <Button type="submit" size="lg" className="w-full h-12 text-base">
-                Gửi yêu cầu
-              </Button>
-              <p className="text-xs text-muted-foreground text-center">Chúng tôi sẽ liên hệ lại trong vòng 30 phút (giờ hành chính)</p>
-            </form>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

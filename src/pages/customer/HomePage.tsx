@@ -4,14 +4,16 @@ import { Link } from 'react-router-dom';
 import { Loader2, Navigation, ArrowRight, Sprout, Shield, Zap, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import CommandCenterHero from '@/components/CommandCenterHero';
-import CropSolutionsTabs from '@/components/CropSolutionsTabs';
+import PersonalizedDashboardHero from '@/components/PersonalizedDashboardHero';
 import NearbyDealers from '@/components/NearbyDealers';
 import RoiCalculatorBlock from '@/components/RoiCalculatorBlock';
 import FieldLog from '@/components/FieldLog';
 import EmergencyBanner from '@/components/EmergencyBanner';
 import AIRuleBanner from '@/components/AIRuleBanner';
 import SeoMeta from '@/components/SeoMeta';
+import ProductEcosystemBlock from '@/components/ProductEcosystemBlock';
+import AgriNewsBlock from '@/components/AgriNewsBlock';
+import FieldShortsBlock from '@/components/FieldShortsBlock';
 import { useHomepageConfig } from '@/contexts/HomepageConfigContext';
 import { trackEvent } from '@/lib/tracking';
 import ogImage from '@/assets/og-nhabe-agri.jpg';
@@ -70,7 +72,16 @@ export default function CustomerHomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-muted/20">
+    <div className="relative min-h-screen bg-gray-50 pb-32 md:pb-8">
+      {/* Topographic Background Pattern */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M36 34v-2h2v2h-2zm0-31V1h2v2h-2zm0 29v-2h2v2h-2zm0-27V3h2v2h-2zm0 25v-2h2v2h-2zm0-23V5h2v2h-2zm0 21v-2h2v2h-2zm0-19V7h2v2h-2zm0 17v-2h2v2h-2zm0-15V9h2v2h-2zm0 13v-2h2v2h-2zm0-11v-2h2v2h-2zm0 9v-2h2v2h-2zm0-7v-2h2v2h-2zm0 5v-2h2v2h-2zm0-3v-2h2v2h-2zm0 1v-2h2v2h-2z' fill='%232D5A27'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '100px 100px'
+        }}
+      />
+      <div className="relative z-10">
       <SeoMeta
         title={config.seo.title}
         description={config.seo.description}
@@ -89,17 +100,27 @@ export default function CustomerHomePage() {
       {/* Emergency banner — admin-controlled, top priority */}
       <EmergencyBanner />
 
-      {/* 1. HERO DASHBOARD — weather + smart search + 3-card AgriCalc */}
-      <CommandCenterHero />
+      {/* 1. HERO DASHBOARD — Personalized Agri-Dashboard */}
+      <PersonalizedDashboardHero />
 
       {/* AI rule banner — appears only when active weather rule triggered */}
       <section className="container pt-4">
         <AIRuleBanner />
       </section>
 
-      {/* 2. CROP SOLUTIONS TABS — Sầu riêng / Cà phê / Cây ăn trái */}
+      {/* 2b. PRODUCT ECOSYSTEM — filter + grid */}
       <MotionSection>
-        <CropSolutionsTabs />
+        <ProductEcosystemBlock />
+      </MotionSection>
+
+      {/* 2c. AGRI NEWS — tabbed knowledge hub */}
+      <MotionSection>
+        <AgriNewsBlock />
+      </MotionSection>
+
+      {/* 2d. FIELD SHORTS — horizontal 9:16 video strip */}
+      <MotionSection>
+        <FieldShortsBlock />
       </MotionSection>
 
       {/* 3. MAP + NEARBY DEALERS — 50/50 split, geo-matching */}
@@ -192,6 +213,27 @@ export default function CustomerHomePage() {
           </div>
         </Card>
       </MotionSection>
+      {/* O2O Sticky Action Bar (Thanh chốt sale bám đáy) */}
+      <div className="fixed bottom-0 left-0 w-full bg-background border-t border-border/40 p-3 flex gap-3 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe-offset-3 md:hidden">
+        <Button 
+          variant="outline" 
+          className="flex-1 h-12 bg-white text-[#2D5A27] border border-[#2D5A27] rounded-full shadow-lg hover:bg-[#2D5A27]/5"
+          asChild
+        >
+          <Link to="/dai-ly">
+            <MapPin className="w-4 h-4 mr-1.5" /> Tìm Đại lý
+          </Link>
+        </Button>
+        <Button 
+          className="flex-1 h-12 bg-[#F57C00] text-white hover:bg-[#E65100] rounded-full shadow-lg font-bold"
+          asChild
+        >
+          <a href="tel:0901234567">
+            <span className="flex items-center justify-center">📞 Chuyên viên Báo giá</span>
+          </a>
+        </Button>
+      </div>
+      </div>
     </div>
   );
 }

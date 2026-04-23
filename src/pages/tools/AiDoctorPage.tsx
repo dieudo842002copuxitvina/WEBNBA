@@ -81,9 +81,9 @@ export default function AiDoctorPage() {
               
               <Button 
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-16 bg-accent hover:bg-accent/90 text-white font-bold text-lg rounded-2xl shadow-lg shadow-accent/30 transition-transform active:scale-95"
+                className="w-full h-16 bg-[#2D5A27] hover:bg-[#1A3A18] text-white font-bold text-lg rounded-2xl shadow-lg shadow-[#2D5A27]/30 transition-transform active:scale-95"
               >
-                <Camera className="w-6 h-6 mr-3" /> Chụp Ảnh Ngay
+                📸 Mở Camera Chụp Lá Bệnh
               </Button>
             </div>
 
@@ -102,8 +102,8 @@ export default function AiDoctorPage() {
                 onChange={handleFileInput}
               />
               <UploadCloud className="w-16 h-16 text-accent mb-6" />
-              <h2 className="text-xl font-bold mb-2">Kéo thả ảnh vào đây</h2>
-              <p className="text-muted-foreground mb-6">hoặc click để chọn ảnh từ máy tính</p>
+              <h2 className="text-xl font-bold mb-2">Kéo thả ảnh chụp cây bệnh vào đây</h2>
+              <p className="text-muted-foreground mb-6">hoặc Click để chọn file</p>
               <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-white rounded-xl h-12 px-8">
                 Duyệt tệp tin
               </Button>
@@ -125,13 +125,13 @@ export default function AiDoctorPage() {
                   <>
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
                     <motion.div 
-                      className="absolute left-0 w-full h-1 bg-green-400 shadow-[0_0_15px_5px_rgba(74,222,128,0.5)] z-10"
+                      className="absolute left-0 w-full h-1 bg-[#2D5A27] shadow-[0_0_15px_5px_rgba(45,90,39,0.5)] z-10"
                       animate={{ top: ['0%', '100%', '0%'] }}
                       transition={{ duration: 3, ease: 'linear', repeat: Infinity }}
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
-                      <ScanLine className="w-12 h-12 text-green-400 animate-pulse mb-3" />
-                      <p className="text-white font-bold tracking-wider">AI ĐANG PHÂN TÍCH...</p>
+                      <ScanLine className="w-12 h-12 text-[#2D5A27] animate-pulse mb-3" />
+                      <p className="text-white font-bold tracking-wider text-center px-4">🤖 Hệ thống đang phân tích tế bào bệnh học...</p>
                     </div>
                   </>
                 )}

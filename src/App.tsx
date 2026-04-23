@@ -53,6 +53,9 @@ import CalculatorPage from "@/pages/tools/CalculatorPage";
 import CalculatorWizardPage from "@/pages/tools/CalculatorWizardPage";
 import HydraulicCalculatorPage from "@/pages/tools/HydraulicCalculatorPage";
 import CalculatorHubPage from "@/pages/tools/CalculatorHubPage";
+import IrrigationPlanner from "@/pages/tools/IrrigationPlanner";
+import NutrientExpert from "@/pages/tools/NutrientExpert";
+import AiDoctorExpert from "@/pages/tools/AiDoctorExpert";
 import HeadLossPage from "@/pages/tools/HeadLossPage";
 import BomEstimatorPage from "@/pages/tools/BomEstimatorPage";
 import ElectricalCalculatorPage from "@/pages/tools/ElectricalCalculatorPage";
@@ -109,6 +112,9 @@ const App = () => {
                   <Route path="/products" element={<ProductsPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/orders" element={<CustomerOrdersPage />} />
+                  <Route path="/cong-cu/du-toan-thuy-luc" element={<IrrigationPlanner />} />
+                  <Route path="/cong-cu/chuyen-gia-dinh-duong" element={<NutrientExpert />} />
+                  <Route path="/cong-cu/bac-si-ai-expert" element={<AiDoctorExpert />} />
                   <Route path="/thi-truong" element={<MarketPage />} />
                   <Route path="/tin-tuc" element={<NewsPage />} />
                   <Route path="/dai-ly" element={<DealersPage />} />

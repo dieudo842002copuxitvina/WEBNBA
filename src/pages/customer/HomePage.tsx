@@ -18,7 +18,7 @@ import { useHomepageConfig } from '@/contexts/HomepageConfigContext';
 import { trackEvent } from '@/lib/tracking';
 import ogImage from '@/assets/og-nhabe-agri.jpg';
 
-const DealerNetworkMap = lazy(() => import('@/components/DealerNetworkMap'));
+import MinimalistDealerNetwork from '@/components/MinimalistDealerNetwork';
 
 /**
  * CustomerHomePage — Spec V2 "Agri-Dashboard & Conversion Engine"
@@ -124,58 +124,20 @@ export default function CustomerHomePage() {
       </MotionSection>
 
       {/* 3. MAP + NEARBY DEALERS — 50/50 split, geo-matching */}
-      <MotionSection className="container py-8 md:py-10">
-        <header className="flex items-end justify-between mb-5">
+      <MotionSection className="container py-8 md:py-16">
+        <header className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
-            <p className="text-[11px] uppercase font-bold tracking-wider text-primary flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" /> Mạng lưới đại lý ủy quyền
-            </p>
-            <h2 className="font-display text-2xl md:text-3xl font-extrabold mt-1 leading-tight">
-              Đại lý gần bạn — <span className="text-primary">Tư vấn 5 phút</span>
+            <Badge className="bg-[#2D5A27]/10 text-[#2D5A27] border-0 mb-3">Geo-Matching Engine</Badge>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+              Hệ thống đại lý ủy quyền <span className="text-[#2D5A27]">gần nhất</span>
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Bán kính {config.map.defaultRadiusKm}km · Có sẵn hàng · Gọi hoặc Zalo trực tiếp.
+            <p className="text-slate-500 mt-2">
+              Chúng tôi kết nối bạn với chuyên gia kỹ thuật địa phương để hỗ trợ nhanh nhất.
             </p>
           </div>
-          <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
-            <Link to="/dai-ly">
-              Tất cả đại lý <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
-            </Link>
-          </Button>
         </header>
 
-        <div className="grid grid-cols-12 gap-4">
-          {/* Map — 50% on lg+ */}
-          <div className="col-span-12 lg:col-span-6">
-            <Suspense
-              fallback={
-                <div className="h-[560px] rounded-2xl bg-muted/30 flex items-center justify-center border border-border">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                </div>
-              }
-            >
-              <DealerNetworkMap />
-            </Suspense>
-          </div>
-
-          {/* Dealers list — 50% on lg+ */}
-          <div className="col-span-12 lg:col-span-6">
-            <Card className="p-4 h-full flex flex-col border-primary/15">
-              <div className="flex items-center justify-between mb-3 shrink-0">
-                <h3 className="font-display font-bold text-base flex items-center gap-1.5">
-                  <Navigation className="w-4 h-4 text-primary" /> Top đại lý gần bạn
-                </h3>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-success flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                  Live
-                </span>
-              </div>
-              <div className="flex-1 overflow-y-auto pr-1 -mr-1 max-h-[520px] scroll-smooth">
-                <NearbyDealers maxResults={5} showStock={false} />
-              </div>
-            </Card>
-          </div>
-        </div>
+        <MinimalistDealerNetwork />
       </MotionSection>
 
       {/* 4. ROI CALCULATOR — investment analysis chart */}

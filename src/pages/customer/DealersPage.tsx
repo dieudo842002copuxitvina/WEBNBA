@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, CheckCircle2, ShieldCheck, Building2, Store, Search, Navigation } from 'lucide-react';
+import { MapPin, Phone, CheckCircle2, ShieldCheck, Building2, Store, Search, Navigation, Droplets, Mountain, Smartphone, Plane } from 'lucide-react';
 import { dealersData, Dealer } from '@/data/dealersData';
 import { useFarmerProfile } from '@/hooks/useFarmerProfile';
 import { Button } from '@/components/ui/button';
@@ -56,6 +56,43 @@ function DealerCard({ dealer }: { dealer: Dealer }) {
   const config = typeConfig[dealer.type] || typeConfig['dealer'];
   const Icon = config.icon;
 
+  const getRegionalServices = (dealer: Dealer) => {
+    if (dealer.type === 'head-office') return [
+      { label: "Phân phối sỉ toàn quốc", icon: ShieldCheck },
+      { label: "Hỗ trợ dự án lớn", icon: Building2 },
+      { label: "Đào tạo kỹ thuật", icon: CheckCircle2 }
+    ];
+    if (dealer.type === 'branch') return [
+      { label: "Trạm bảo hành ủy quyền", icon: ShieldCheck },
+      { label: "Thiết kế bản vẽ 2D/3D", icon: CheckCircle2 }
+    ];
+
+    const province = dealer.province;
+    if (["Gia Lai", "Đắk Lắk", "Lâm Đồng", "Đắk Nông"].includes(province)) return [
+      { label: "Chuyên tưới địa hình dốc", icon: Mountain },
+      { label: "Giải pháp Cà phê & Tiêu", icon: Droplets },
+      { label: "Lắp đặt béc bù áp", icon: CheckCircle2 }
+    ];
+    if (["Đồng Nai", "Bình Phước", "Tây Ninh"].includes(province)) return [
+      { label: "Tự động hóa nhà màng", icon: Smartphone },
+      { label: "Tưới Cao su & Điều", icon: Droplets },
+      { label: "Trạm bơm công suất lớn", icon: Zap }
+    ];
+    if (["Đồng Tháp", "Bến Tre", "Tiền Giang", "Long An"].includes(province)) return [
+      { label: "Tưới tiết kiệm ngăn mặn", icon: Droplets },
+      { label: "Tưới cây ăn trái", icon: CheckCircle2 },
+      { label: "Điều khiển Smartphone", icon: Smartphone }
+    ];
+    if (["Bình Thuận", "Ninh Thuận", "Phú Yên", "Khánh Hòa"].includes(province)) return [
+      { label: "Tưới vùng khô hạn", icon: Droplets },
+      { label: "Thiết bị tưới Thanh Long", icon: CheckCircle2 },
+      { label: "Phun thuốc bằng Drone", icon: Plane }
+    ];
+    return (dealer.services || []).map(s => ({ label: s, icon: CheckCircle2 }));
+  };
+
+  const services = getRegionalServices(dealer);
+
   return (
     <Card className={`mb-4 overflow-hidden border-2 transition-all hover:shadow-lg ${config.border} bg-white/80 backdrop-blur-md`}>
       <CardContent className="p-5">
@@ -82,11 +119,11 @@ function DealerCard({ dealer }: { dealer: Dealer }) {
         </div>
 
         {/* Services Chips */}
-        {!dealer.isHeadOffice && dealer.services && dealer.services.length > 0 && (
+        {services.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
-            {dealer.services.map((service, idx) => (
-              <span key={idx} className="flex items-center gap-1 bg-[#2D5A27]/5 text-[#2D5A27] text-xs px-2 py-1 rounded-md border border-[#2D5A27]/10 font-medium">
-                <CheckCircle2 className="w-3 h-3" /> {service}
+            {services.map((service, idx) => (
+              <span key={idx} className="flex items-center gap-1.5 bg-green-50 text-green-700 text-[10px] px-2 py-1 rounded-md border border-green-100 font-bold uppercase tracking-wider">
+                <service.icon className="w-3 h-3" /> {service.label}
               </span>
             ))}
           </div>

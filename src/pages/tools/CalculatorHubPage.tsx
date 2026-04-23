@@ -49,7 +49,7 @@ const SECTIONS = [
         icon: Calculator,
         badge: '🔥 Hot',
         badgeColor: 'bg-red-100 text-red-600',
-        path: '/cong-cu/tinh-toan',
+        path: '/cong-cu/du-toan-thuy-luc',
       },
       {
         id: 'ky-su-dinh-duong',
@@ -58,7 +58,7 @@ const SECTIONS = [
         icon: FlaskConical,
         badge: 'Mới',
         badgeColor: 'bg-blue-100 text-blue-600',
-        path: '/cong-cu/cham-phan',
+        path: '/cong-cu/chuyen-gia-dinh-duong',
       }
     ]
   },
@@ -90,7 +90,7 @@ const SECTIONS = [
         icon: Bot,
         badge: '✨ AI',
         badgeColor: 'bg-purple-100 text-purple-700',
-        path: '/cong-cu/bac-si-ai',
+        path: '/cong-cu/bac-si-ai-expert',
       },
       {
         id: 'lich-tuoi',

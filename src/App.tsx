@@ -53,6 +53,8 @@ import HeadLossPage from "@/pages/tools/HeadLossPage";
 import BomEstimatorPage from "@/pages/tools/BomEstimatorPage";
 import ElectricalCalculatorPage from "@/pages/tools/ElectricalCalculatorPage";
 import RoiCalculatorPage from "@/pages/tools/RoiCalculatorPage";
+import FertigationPage from "@/pages/tools/FertigationPage";
+import AICropDiagnosticPage from "@/pages/tools/AICropDiagnosticPage";
 import AdminCalculatorParamsPage from "@/pages/admin/AdminCalculatorParamsPage";
 import AdminCalculatorLeadsPage from "@/pages/admin/AdminCalculatorLeadsPage";
 import PartnerDashboard from "@/pages/partner/PartnerDashboard";
@@ -113,10 +115,13 @@ const App = () => {
                   <Route path="/cong-cu/tinh-toan" element={<CalculatorWizardPage />} />
                   <Route path="/cong-cu/tinh-toan-tuoi" element={<CalculatorPage />} />
                   <Route path="/cong-cu/tinh-toan-thuy-luc" element={<HydraulicCalculatorPage />} />
+                  <Route path="/cong-cu/du-toan-tuoi" element={<BomEstimatorPage />} />
                   <Route path="/cong-cu/sut-ap" element={<HeadLossPage />} />
                   <Route path="/cong-cu/du-toan-1ha" element={<BomEstimatorPage />} />
                   <Route path="/cong-cu/dien-nang" element={<ElectricalCalculatorPage />} />
                   <Route path="/cong-cu/roi" element={<RoiCalculatorPage />} />
+                  <Route path="/cong-cu/cham-phan" element={<FertigationPage />} />
+                  <Route path="/cong-cu/bac-si-ai" element={<AICropDiagnosticPage />} />
                   <Route path="/giai-phap-tuoi" element={<SeoLandingIndex />} />
                   <Route path="/giai-phap-tuoi/:crop/:province" element={<SeoLandingPage />} />
                   <Route path="/doi-tho/dang-ky" element={<InstallerRegisterPage />} />

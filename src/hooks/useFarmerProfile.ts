@@ -15,6 +15,12 @@ export interface FarmerProfile {
   cropName: string;
   /** Diện tích (ha) */
   areHa: number | null;
+  /** BOM draft area (m2) */
+  bomAreaM2: number | null;
+  /** BOM draft spacing row (m) */
+  bomSpacingRow: number | null;
+  /** BOM draft spacing plant (m) */
+  bomSpacingPlant: number | null;
   /** Tỉnh */
   provinceCode: string;
   provinceName: string;
@@ -39,6 +45,9 @@ const DEFAULT_PROFILE: FarmerProfile = {
   cropKey: '',
   cropName: '',
   areHa: null,
+  bomAreaM2: null,
+  bomSpacingRow: null,
+  bomSpacingPlant: null,
   provinceCode: '',
   provinceName: '',
   districtCode: '',

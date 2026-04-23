@@ -289,7 +289,7 @@ function BomDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
     const params = new URLSearchParams();
     if (area) params.set('area', area);
     if (crop) params.set('crop', crop);
-    navigate(`/cong-cu/du-toan-1ha?${params.toString()}`);
+    navigate(`/cong-cu/du-toan-tuoi?${params.toString()}`);
   };
 
   return (

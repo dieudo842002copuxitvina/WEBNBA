@@ -20,6 +20,7 @@ import PartnerLayout from "@/layouts/PartnerLayout";
 import AuthPage from "@/pages/AuthPage";
 import CustomerHomePage from "@/pages/customer/HomePage";
 import ProductsPage from "@/pages/customer/ProductsPage";
+import ProductCatalogPage from "@/pages/customer/ProductCatalogPage";
 import ProductDetailPage from "@/pages/customer/ProductDetailPage";
 import CartPage from "@/pages/customer/CartPage";
 import CustomerOrdersPage from "@/pages/customer/OrdersPage";
@@ -100,6 +101,7 @@ const App = () => {
                 {/* Public + Customer — TopNav layout */}
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<CustomerHomePage />} />
+                  <Route path="/san-pham" element={<ProductCatalogPage />} />
                   <Route path="/products" element={<ProductsPage />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
                   <Route path="/cart" element={<CartPage />} />

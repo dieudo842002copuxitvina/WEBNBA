@@ -10,6 +10,7 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import TickerTape from './TickerTape';
+import ProductMegaMenu from './ProductMegaMenu';
 import {
   NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList,
   NavigationMenuTrigger, navigationMenuTriggerStyle, NavigationMenuLink,
@@ -24,7 +25,6 @@ const ECOSYSTEM: NavGroup = {
   label: 'Hệ sinh thái',
   icon: <Layers className="w-4 h-4" />,
   items: [
-    { label: 'Sản phẩm',  path: '/products',  icon: <Package className="w-4 h-4" />,    desc: 'Máy bơm, ống tưới, drone, cảm biến' },
     { label: 'Giải pháp', path: '/giai-phap', icon: <Lightbulb className="w-4 h-4" />,  desc: 'Trọn gói theo cây trồng & địa hình' },
     { label: 'Công cụ',   path: '/cong-cu',   icon: <Calculator className="w-4 h-4" />, desc: 'Tính toán tưới, dự toán, ROI' },
     { label: 'Thư viện',  path: '/thu-vien',  icon: <BookOpen className="w-4 h-4" />,   desc: 'Hướng dẫn kỹ thuật & blog' },
@@ -117,7 +117,9 @@ export default function TopNav() {
 
           {/* Desktop nav — grouped dropdowns for customers */}
           {isCustomer ? (
-            <NavigationMenu className="hidden lg:flex">
+            <div className="hidden lg:flex items-center gap-2">
+              <ProductMegaMenu />
+              <NavigationMenu>
               <NavigationMenuList className="gap-1">
                 {[ECOSYSTEM, NETWORK].map((group) => (
                   <NavigationMenuItem key={group.label}>
@@ -175,6 +177,7 @@ export default function TopNav() {
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
+            </div>
           ) : (
             // Role-specific nav (dealer/admin/fieldsales) — keep simple flat list
             <nav className="hidden lg:flex items-center gap-1 flex-1 overflow-x-auto">
@@ -299,6 +302,7 @@ export default function TopNav() {
             <div className="flex-1 overflow-y-auto px-5 py-6 space-y-7">
               {isCustomer ? (
                 <>
+                  <ProductMegaMenu isMobile={true} onMobileClose={() => setMobileOpen(false)} />
                   {[ECOSYSTEM, NETWORK].map((group) => (
                     <section key={group.label}>
                       <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-3 flex items-center gap-1.5">

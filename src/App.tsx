@@ -22,6 +22,9 @@ import CustomerHomePage from "@/pages/customer/HomePage";
 import ProductsPage from "@/pages/customer/ProductsPage";
 import ProductCatalogPage from "@/pages/customer/ProductCatalogPage";
 import ProductDetailPage from "@/pages/customer/ProductDetailPage";
+import AiDoctorPage from "@/pages/customer/AiDoctorPage";
+import FertigationPage from "@/pages/customer/FertigationPage";
+import DealersPage from "@/pages/customer/DealersPage";
 import CartPage from "@/pages/customer/CartPage";
 import CustomerOrdersPage from "@/pages/customer/OrdersPage";
 import DealerDashboard from "@/pages/dealer/DealerDashboard";
@@ -108,11 +111,13 @@ const App = () => {
                   <Route path="/orders" element={<CustomerOrdersPage />} />
                   <Route path="/thi-truong" element={<MarketPage />} />
                   <Route path="/tin-tuc" element={<NewsPage />} />
-                  <Route path="/dai-ly" element={<DealerDirectoryPage />} />
+                  <Route path="/dai-ly" element={<DealersPage />} />
                   <Route path="/giai-phap" element={<SolutionsPage />} />
                   <Route path="/lien-he" element={<ContactPage />} />
                   <Route path="/cong-cu" element={<CalculatorHubPage />} />
                   <Route path="/cong-cu/tinh-toan" element={<CalculatorWizardPage />} />
+                  <Route path="/cong-cu/cham-phan" element={<FertigationPage />} />
+                  <Route path="/cong-cu/bac-si-ai" element={<AiDoctorPage />} />
                   <Route path="/cong-cu/tinh-toan-tuoi" element={<CalculatorPage />} />
                   <Route path="/cong-cu/tinh-toan-thuy-luc" element={<HydraulicCalculatorPage />} />
                   <Route path="/cong-cu/sut-ap" element={<HeadLossPage />} />

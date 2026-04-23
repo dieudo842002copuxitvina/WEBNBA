@@ -90,7 +90,7 @@ const SECTIONS = [
         icon: Bot,
         badge: '✨ AI',
         badgeColor: 'bg-purple-100 text-purple-700',
-        path: '/tools/ai-doctor',
+        path: '/cong-cu/bac-si-ai',
       },
       {
         id: 'lich-tuoi',

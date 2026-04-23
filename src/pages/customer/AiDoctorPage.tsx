@@ -104,14 +104,15 @@ export default function AiDoctorPage() {
 
     try {
       await submitLeadToSupabase({
-        phoneNumber,
-        serviceType: 'ai-doctor',
-        requirements: {
-          disease: result?.disease,
-          province: profile.provinceName,
-          crop: profile.cropId
+        customer_phone: phoneNumber,
+        lead_type: 'AI_DOCTOR',
+        province: profile.provinceName || 'Unknown',
+        district: profile.districtName || 'Unknown',
+        crop_type: profile.cropId || 'Unknown',
+        calculator_data: {
+          disease: result?.disease
         },
-        assignedDealerId: dealer.id
+        assigned_dealer_id: dealer.id
       });
       
       setIsModalOpen(false);

@@ -11,10 +11,10 @@ import SeoMeta from '@/components/SeoMeta';
 // --- MOCK DATA ---
 const tickerData = [
   { name: 'Cà phê Robusta', price: '120.000đ', change: '+2.5%', isUp: true },
+  { name: 'Cà phê Arabica', price: '155.000đ', change: '+1.8%', isUp: true },
   { name: 'Hồ Tiêu', price: '150.000đ', change: '-1.2%', isUp: false },
   { name: 'Sầu riêng Ri6', price: '130.000đ', change: '+5.0%', isUp: true },
-  { name: 'Lúa gạo ST25', price: '8.500đ', change: '0.0%', isUp: null },
-  { name: 'Tín chỉ Carbon', price: '15$', change: '+10%', isUp: true }
+  { name: 'Lúa gạo ST25', price: '8.500đ', change: '0.0%', isUp: null }
 ];
 
 const tableData = [
@@ -35,6 +35,47 @@ const chartData = [
   { day: 'CN', price: 120.5 }
 ];
 
+const seoSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Dataset",
+      "name": "Bảng giá nông sản Đắk Lắk, Gia Lai hôm nay",
+      "description": "Cập nhật giá cà phê, sầu riêng, hồ tiêu mới nhất từ các đại lý Nhà Bè Agri.",
+      "variableMeasured": ["Giá Cà Phê", "Giá Sầu Riêng", "Giá Hồ Tiêu"]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Giá cà phê hôm nay tại Đắk Lắk là bao nhiêu?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Giá cà phê Robusta hôm nay tại Đắk Lắk dao động quanh mức 120,500 đ/kg. Truy cập Nhà Bè Agri để xem biểu đồ chi tiết."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Đại lý thu mua sầu riêng gần nhất ở đâu?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nhà Bè Agri cung cấp danh sách hơn 25+ đại lý trên toàn quốc hỗ trợ kỹ thuật và liên kết thu mua sầu riêng. Vui lòng xem tại mục Mạng lưới đại lý."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Cách theo dõi giá tiêu trực tuyến?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bà con nông dân có thể theo dõi giá tiêu (Hồ tiêu đen, tiêu sọ) cập nhật liên tục mỗi 8h sáng tại Trung Tâm Giá Nông Sản Nhà Bè Agri."
+          }
+        }
+      ]
+    }
+  ]
+};
+
 export default function MarketPage() {
   return (
     <div 
@@ -44,6 +85,7 @@ export default function MarketPage() {
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d5a27' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
       }}
     >
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(seoSchema) }} />
       <SeoMeta
         title="Trung Tâm Giá & Phân Tích Thị Trường Nông Sản"
         description="Cập nhật giá cà phê hôm nay tại Đắk Lắk, Gia Lai chính xác nhất từ hệ thống đại lý Nhà Bè Agri. Xem biểu đồ xu hướng thị trường sầu riêng, hồ tiêu."
@@ -57,10 +99,10 @@ export default function MarketPage() {
             <div key={idx} className="flex items-center gap-2 mx-8 text-sm font-semibold tracking-wider">
               <span className="text-white/80">{item.name}:</span>
               <span>{item.price}</span>
-              {item.isUp === true && <TrendingUp className="w-4 h-4 text-green-400 ml-1" />}
+              {item.isUp === true && <TrendingUp className="w-4 h-4 text-green-300 ml-1" />}
               {item.isUp === false && <TrendingDown className="w-4 h-4 text-red-400 ml-1" />}
               {item.isUp !== null && (
-                <span className={item.isUp ? 'text-green-400' : 'text-red-400'}>
+                <span className={item.isUp ? 'text-green-300' : 'text-red-400'}>
                   {item.change}
                 </span>
               )}
@@ -108,7 +150,7 @@ export default function MarketPage() {
                         <td className="py-4 px-5 text-slate-500">{row.region}</td>
                         <td className="py-4 px-5 text-right font-semibold text-[#F57C00]">{row.price}</td>
                         <td className="py-4 px-5">
-                          <div className={`flex items-center justify-center gap-1 font-semibold ${row.isUp === true ? 'text-green-600' : row.isUp === false ? 'text-red-500' : 'text-slate-400'}`}>
+                          <div className={`flex items-center justify-center gap-1 font-semibold ${row.isUp === true ? 'text-[#2D5A27]' : row.isUp === false ? 'text-red-600' : 'text-slate-500'}`}>
                             {row.isUp === true && <TrendingUp className="w-4 h-4" />}
                             {row.isUp === false && <TrendingDown className="w-4 h-4" />}
                             {row.change}
@@ -191,6 +233,63 @@ export default function MarketPage() {
 
           </div>
         </div>
+
+        {/* 5. Market Insights (Phân Tích & Dự Báo) */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 font-display mb-8">Nhận Định Thị Trường Nông Sản</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            
+            {/* Card 1 */}
+            <Card className="bg-white/80 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-3xl flex flex-col h-full">
+              <CardContent className="p-6 flex flex-col h-full">
+                <Badge className="bg-[#2D5A27]/10 text-[#2D5A27] hover:bg-[#2D5A27]/20 border-0 mb-4 w-fit">Thị trường Thế Giới</Badge>
+                <h3 className="font-bold text-lg text-slate-800 mb-3 leading-snug">Cập nhật sàn London & New York: Cà phê bước vào chu kỳ giá mới</h3>
+                <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+                  Phân tích biến động kho dự trữ và dự báo sản lượng Robusta từ các đối thủ cạnh tranh trực tiếp. Mức giá neo cao tạo cơ hội chốt lời lớn.
+                </p>
+                <Link to="/cong-cu/tinh-toan" className="mt-auto">
+                  <Button variant="outline" className="w-full border-[#2D5A27] text-[#2D5A27] hover:bg-[#2D5A27]/5 rounded-xl font-semibold">
+                    🧮 Tính toán vật tư tưới tiết kiệm
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Card 2 */}
+            <Card className="bg-white/80 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-3xl flex flex-col h-full">
+              <CardContent className="p-6 flex flex-col h-full">
+                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 mb-4 w-fit">Xuất khẩu</Badge>
+                <h3 className="font-bold text-lg text-slate-800 mb-3 leading-snug">Thông tin cửa khẩu: Sầu riêng và cơ hội mở rộng thị trường 2026</h3>
+                <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+                  Cập nhật các quy định mới về đóng gói, mã số vùng trồng và tiêu chuẩn chất lượng khắt khe để xuất khẩu chính ngạch sang thị trường tỷ dân.
+                </p>
+                <Link to="/dai-ly" className="mt-auto">
+                  <Button variant="outline" className="w-full border-[#2D5A27] text-[#2D5A27] hover:bg-[#2D5A27]/5 rounded-xl font-semibold">
+                    📍 Tìm đại lý hỗ trợ mã số vùng trồng
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Card 3 */}
+            <Card className="bg-white/80 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-3xl flex flex-col h-full">
+              <CardContent className="p-6 flex flex-col h-full">
+                <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-0 mb-4 w-fit">Kỹ thuật & Lợi nhuận</Badge>
+                <h3 className="font-bold text-lg text-slate-800 mb-3 leading-snug">Tối ưu chi phí đầu tư hệ thống tưới khi giá nông sản biến động</h3>
+                <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+                  Cách tính toán điểm hòa vốn khi lắp đặt thiết bị tưới công nghệ cao trong giai đoạn giá vật tư đầu vào tăng. Chiến lược phân bổ ngân sách.
+                </p>
+                <Link to="/dai-ly" className="mt-auto">
+                  <Button className="w-full bg-[#F57C00] hover:bg-[#E65100] text-white rounded-xl font-bold shadow-md shadow-orange-500/20">
+                    📞 Tư vấn từ Đại lý gần nhất
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+          </div>
+        </div>
+
       </div>
     </div>
   );

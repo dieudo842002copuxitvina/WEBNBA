@@ -82,6 +82,7 @@ import LibraryPage from "@/pages/library/LibraryPage";
 import ArticleDetailPage from "@/pages/library/ArticleDetailPage";
 import CaseStudiesPage from "@/pages/casestudies/CaseStudiesPage";
 import CaseStudyDetailPage from "@/pages/casestudies/CaseStudyDetailPage";
+import KnowledgeHubPage from "@/pages/customer/KnowledgeHubPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -144,6 +145,7 @@ const App = () => {
                   <Route path="/thu-vien/:slug" element={<ArticleDetailPage />} />
                   <Route path="/case-studies" element={<CaseStudiesPage />} />
                   <Route path="/case-studies/:slug" element={<CaseStudyDetailPage />} />
+                  <Route path="/tri-thuc" element={<KnowledgeHubPage />} />
                 </Route>
 
                 {/* Admin — sidebar + RBAC */}

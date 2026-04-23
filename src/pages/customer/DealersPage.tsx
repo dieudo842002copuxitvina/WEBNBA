@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, CheckCircle2, ShieldCheck, Building2, Store, Search, Navigation, Droplets, Mountain, Smartphone, Plane } from 'lucide-react';
+import { MapPin, Phone, CheckCircle2, ShieldCheck, Building2, Store, Search, Navigation, Droplets, Mountain, Smartphone, Plane, Zap } from 'lucide-react';
 import { dealersData, Dealer } from '@/data/dealersData';
 import { useFarmerProfile } from '@/hooks/useFarmerProfile';
 import { Button } from '@/components/ui/button';

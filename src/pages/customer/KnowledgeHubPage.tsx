@@ -12,294 +12,406 @@ import {
   BarChart3,
   FileText,
   Zap,
-  Leaf
+  Leaf,
+  Share2,
+  Bookmark,
+  PlayCircle,
+  ArrowRight,
+  MapPin,
+  Calculator,
+  ChevronLeft
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SeoMeta from '@/components/SeoMeta';
 
-// --- MOCK DATA ---
-const TAGS = ['Tất cả', '#KỹThuật', '#ThịTrường', '#ThựcĐịa', '#SầuRiêng', '#CàPhê'];
+// --- Types & Data ---
+interface Article {
+  id: string;
+  category: string;
+  title: string;
+  desc: string;
+  date: string;
+  readTime: string;
+  image: string;
+  icon: any;
+  cta?: { text: string; link: string; icon: any };
+}
 
-const TECH_ARTICLES = [
+const CATEGORIES = [
+  'Tất cả', 
+  'Kỹ thuật Tưới', 
+  'Thị trường Nông sản', 
+  'Dinh dưỡng Cây trồng', 
+  'Dự án Thực tế', 
+  'Sổ tay Nông học'
+];
+
+const FEATURED_ARTICLE: Article = {
+  id: 'math-irrigation',
+  category: 'Kỹ thuật Tưới',
+  title: "Toán học trong thủy lợi: Cách tính độ đồng đều của béc tưới trên đất dốc Tây Nguyên.",
+  desc: "Nghiên cứu chi tiết về phân bổ áp suất và lưu lượng trên địa hình chênh lệch độ cao lớn. Giúp nông dân tối ưu hóa 100% diện tích tưới.",
+  date: "24/04/2026",
+  readTime: "8 phút đọc",
+  image: "file:///C:/Users/DO/.gemini/antigravity/brain/508e4aba-8540-46e7-8d58-fe6add255ba9/sprinkler_nozzle_macro_1776957535480.png",
+  icon: Wrench,
+  cta: { text: "Tìm thợ vãng lai gần nhất", link: "/dai-ly", icon: MapPin }
+};
+
+const LATEST_SIDEBAR: Article[] = [
   {
-    id: 's2000-slope',
-    title: 'Quy trình lắp đặt béc tưới Rivulis S2000 cho vườn sầu riêng địa hình dốc',
-    desc: 'Hướng dẫn cách tính toán khoảng cách béc và cách đi đường ống LDPE để áp suất đồng đều nhất trên sườn đồi.',
-    thumbnail: 'https://images.unsplash.com/photo-1592861343717-3bf79ab44621?w=800&q=80', // Placeholder: Cận cảnh béc tưới
-    tag: '#KỹThuật',
-    readTime: '7 phút đọc',
-    icon: Wrench
+    id: 'roi-analysis',
+    category: 'Thị trường Nông sản',
+    title: "Phân tích biên lợi nhuận: Tại sao tưới tự động giúp hoàn vốn sau 1.5 năm?",
+    desc: "Báo cáo số liệu thực tế từ 500 hộ dân trồng sầu riêng.",
+    date: "23/04/2026",
+    readTime: "5 phút đọc",
+    image: "file:///C:/Users/DO/.gemini/antigravity/brain/508e4aba-8540-46e7-8d58-fe6add255ba9/technician_farmer_app_consultation_1776957599270.png",
+    icon: TrendingUp
   },
   {
-    id: 'clogging-fix',
-    title: 'Mẹo xử lý tắc nghẽn hệ thống tưới nhỏ giọt do nguồn nước phèn/vôi',
-    desc: 'Cách sử dụng axit nhẹ để súc rửa đường ống và quy trình vệ sinh bộ lọc đĩa Azud định kỳ hiệu quả.',
-    thumbnail: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80', // Placeholder: Vệ sinh bộ lọc
-    tag: '#ThựcĐịa',
-    readTime: '5 phút đọc',
-    icon: Droplets
+    id: 'durian-nutrition',
+    category: 'Dinh dưỡng Cây trồng',
+    title: "Chu kỳ dinh dưỡng sầu riêng: Công thức N-P-K tối ưu cho giai đoạn nuôi trái.",
+    desc: "Mẹo bón phân hòa tan qua hệ thống tưới để đạt năng suất cao nhất.",
+    date: "22/04/2026",
+    readTime: "6 phút đọc",
+    image: "https://images.unsplash.com/photo-1615485240384-552e403bc68e?w=400&q=80",
+    icon: Leaf
   },
   {
-    id: 'venturi-sop',
-    title: 'SOP: 5 bước vận hành trạm bơm châm phân Venturi không gây kết tủa',
-    desc: 'Quy tắc pha phân và thời điểm bắt đầu/kết thúc chu kỳ châm phân trong quá trình tưới để bảo vệ hệ thống.',
-    thumbnail: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80', // Placeholder: Cụm trung tâm
-    tag: '#KỹThuật',
-    readTime: '6 phút đọc',
+    id: 'pump-maintenance',
+    category: 'Kỹ thuật Tưới',
+    title: "SOP: Quy trình 7 bước bảo trì máy bơm ly tâm để kéo dài tuổi thọ trên 10 năm.",
+    desc: "Hướng dẫn thực chiến từ đội ngũ kỹ sư Nhà Bè Agri.",
+    date: "21/04/2026",
+    readTime: "7 phút đọc",
+    image: "file:///C:/Users/DO/.gemini/antigravity/brain/508e4aba-8540-46e7-8d58-fe6add255ba9/fertilizer_sack_filter_setup_1776957578496.png",
     icon: Zap
   }
 ];
 
-const MARKET_ARTICLES = [
+const MARKET_NEWS: Article[] = [
   {
-    id: 'durian-price-2026',
-    title: 'Phân tích chu kỳ giá Sầu riêng 2026: Cơ hội từ nghị định thư xuất khẩu chính ngạch',
-    desc: 'Đánh giá nhu cầu từ thị trường Trung Quốc và yêu cầu về mã số vùng trồng cho nông dân Việt Nam.',
-    thumbnail: 'https://images.unsplash.com/photo-1615485240384-552e403bc68e?w=800&q=80', // Placeholder: Cánh đồng sầu riêng
-    tag: '#ThịTrường',
-    readTime: '8 phút đọc',
-    icon: TrendingUp
-  },
-  {
-    id: 'globalgap-automation',
-    title: 'Tại sao tưới tự động là chìa khóa để đạt chuẩn GlobalGAP?',
-    desc: 'Sự minh bạch trong việc ghi chép nhật ký tưới và bón phân thông qua hệ thống tự động hóa Smartphone.',
-    thumbnail: 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=800&q=80', // Placeholder: Nông dân smartphone
-    tag: '#ThựcĐịa',
-    readTime: '5 phút đọc',
-    icon: BarChart3
-  },
-  {
-    id: 'pressure-compensating-trend',
-    title: 'Báo cáo thị trường vật tư nông nghiệp: Xu hướng chuyển dịch sang thiết bị tưới bù áp',
-    desc: 'Tại sao nông dân sẵn sàng đầu tư béc đắt tiền để tiết kiệm chi phí vận hành và nhân công lâu dài.',
-    thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80', // Placeholder: Biểu đồ tăng trưởng
-    tag: '#ThịTrường',
-    readTime: '10 phút đọc',
-    icon: Search
+    id: 'export-trends',
+    category: 'Thị trường Nông sản',
+    title: "Xu hướng xuất khẩu chính ngạch: Tiêu chuẩn GAP và vai trò của hệ thống tưới thông minh.",
+    desc: "Thị trường Trung Quốc đang khắt khe hơn với mã vùng trồng và nhật ký canh tác điện tử.",
+    date: "20/04/2026",
+    readTime: "10 phút đọc",
+    image: "file:///C:/Users/DO/.gemini/antigravity/brain/508e4aba-8540-46e7-8d58-fe6add255ba9/agri_drone_coffee_plantation_1776957559599.png",
+    icon: BarChart3,
+    cta: { text: "Dự toán vật tư cho vườn", link: "/cong-cu", icon: Calculator }
   }
 ];
 
+const AGRONOMY_HANDBOOK: Article[] = [
+  {
+    id: 'pest-control',
+    category: 'Sổ tay Nông học',
+    title: "Dịch tễ học: Nhận diện và phòng trừ rệp sáp bằng phương pháp sinh học kết hợp hệ thống tưới.",
+    desc: "Cách ứng dụng hệ thống phun thuốc tự động để kiểm soát dịch bệnh diện rộng.",
+    date: "19/04/2026",
+    readTime: "5 phút đọc",
+    image: "https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?w=600&q=80",
+    icon: Droplets
+  }
+];
+
+// --- Sub-components ---
+
+const ArticleCard = ({ article, horizontal = false }: { article: Article; horizontal?: boolean }) => {
+  return (
+    <motion.div 
+      whileHover={{ y: -5, scale: 1.01 }}
+      className={`group relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-[20px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 ${horizontal ? 'flex flex-col md:flex-row gap-6' : 'flex flex-col'}`}
+    >
+      <div className={`relative overflow-hidden ${horizontal ? 'md:w-1/3 aspect-video md:aspect-square' : 'aspect-[16/10]'}`}>
+        <img 
+          src={article.image} 
+          alt={article.title} 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+        />
+        <div className="absolute top-4 left-4">
+          <Badge className="bg-[#2D5A27] text-white border-0 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+            {article.category}
+          </Badge>
+        </div>
+      </div>
+      
+      <div className={`p-6 flex flex-col flex-1`}>
+        <div className="flex items-center gap-3 mb-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+          <span>{article.date}</span>
+          <span className="w-1 h-1 bg-slate-300 rounded-full" />
+          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {article.readTime}</span>
+        </div>
+        
+        <h3 className={`font-bold text-slate-900 leading-tight mb-3 group-hover:text-[#2D5A27] transition-colors ${horizontal ? 'text-xl md:text-2xl' : 'text-lg'}`}>
+          {article.title}
+        </h3>
+        
+        <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-6">
+          {article.desc}
+        </p>
+
+        {article.cta && (
+          <div className="mb-6 p-4 bg-[#2D5A27]/5 border border-[#2D5A27]/10 rounded-2xl flex items-center justify-between group/cta cursor-pointer hover:bg-[#2D5A27]/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <article.cta.icon className="w-5 h-5 text-[#2D5A27]" />
+              <span className="text-sm font-bold text-[#2D5A27]">{article.cta.text}</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#2D5A27] group-hover/cta:translate-x-1 transition-transform" />
+          </div>
+        )}
+
+        <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-slate-500 hover:text-[#FF6B00]">
+              <Bookmark className="w-4 h-4 mr-1" /> <span className="text-[10px] font-bold uppercase">Lưu sổ tay</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-slate-500 hover:text-blue-500">
+              <Share2 className="w-4 h-4 mr-1" /> <span className="text-[10px] font-bold uppercase">Zalo</span>
+            </Button>
+          </div>
+          <Button variant="link" className="p-0 h-auto text-[#2D5A27] font-black text-xs uppercase tracking-wider flex items-center gap-1 group/btn">
+            Đọc tiếp <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// --- Main Page ---
+
 export default function KnowledgeHubPage() {
-  const [activeTag, setActiveTag] = useState('Tất cả');
+  const [activeCategory, setActiveCategory] = useState('Tất cả');
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Trung Tâm Tri Thức Nhà Bè Agri',
+    description: 'Kho kiến thức chuyên sâu về kỹ thuật tưới và thị trường nông sản.',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Nhà Bè Agri',
+      logo: 'https://webnba.vercel.app/logo.png'
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-slate-50">
       <SeoMeta 
-        title="Trung Tâm Tri Thức Nhà Bè Agri | Kỹ Thuật & Thị Trường"
-        description="Kho kiến thức thực chiến về hệ thống tưới, dinh dưỡng cây trồng và phân tích thị trường nông sản chuyên sâu."
+        title="Trung Tâm Tri Thức | Digital Journal Nhà Bè Agri"
+        description="Kỹ thuật tưới, Giá nông sản, Nhà Bè Agri - Tạp chí điện tử dành cho nông dân hiện đại."
+        jsonLd={jsonLd}
       />
 
-      {/* HEADER */}
-      <div className="relative bg-white/40 backdrop-blur-md pt-12 pb-16 border-b border-white/60">
-        <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge className="bg-[#2D5A27]/10 text-[#2D5A27] border-0 mb-4 px-4 py-1 text-sm font-bold">
-              KNOWLEDGE HUB
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 font-display mb-6">
-              Trung Tâm Tri Thức <span className="text-[#2D5A27]">Nhà Bè Agri</span>
-            </h1>
-            <p className="text-slate-600 text-lg leading-relaxed">
-              Nơi chia sẻ những bí quyết kỹ thuật thực chiến và xu hướng thị trường nông sản mới nhất dành cho nhà nông hiện đại.
-            </p>
-          </div>
+      {/* ─── STICKY SUB-NAV ──────────────────────────────────────────────── */}
+      <div className="sticky top-16 z-40 bg-white/70 backdrop-blur-xl border-b border-white/50 shadow-sm overflow-x-auto no-scrollbar">
+        <div className="container flex items-center h-14 gap-8">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`whitespace-nowrap text-sm font-bold uppercase tracking-widest transition-all relative h-full flex items-center ${
+                activeCategory === cat ? 'text-[#2D5A27]' : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              {cat}
+              {activeCategory === cat && (
+                <motion.div 
+                  layoutId="activeSubNav"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2D5A27]" 
+                />
+              )}
+            </button>
+          ))}
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-100/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 -z-10" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-100/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 -z-10" />
       </div>
 
-      {/* FILTER BAR */}
-      <div className="sticky top-16 z-30 bg-white/70 backdrop-blur-md border-b border-slate-100 py-4 shadow-sm">
-        <div className="container">
-          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-slate-500 shrink-0">
-              <Filter className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase tracking-wider">Lọc:</span>
+      <div className="container py-12">
+        
+        {/* ─── HERO MAGAZINE SECTION (7/3) ─────────────────────────────────── */}
+        <section className="grid grid-cols-1 lg:grid-cols-10 gap-8 mb-20">
+          {/* Featured Post */}
+          <div className="lg:col-span-7">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="relative aspect-[16/9] rounded-[30px] overflow-hidden group cursor-pointer shadow-2xl"
+            >
+              <img 
+                src={FEATURED_ARTICLE.image} 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+                alt="Featured" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-8 md:p-12 w-full">
+                <Badge className="bg-[#FF6B00] text-white border-0 mb-4 px-4 py-1 font-black">TIÊU ĐIỂM</Badge>
+                <h2 className="text-3xl md:text-5xl font-black text-white leading-tight mb-4 drop-shadow-lg">
+                  {FEATURED_ARTICLE.title}
+                </h2>
+                <p className="text-slate-200 text-lg md:text-xl max-w-2xl line-clamp-2 mb-6">
+                  {FEATURED_ARTICLE.desc}
+                </p>
+                <div className="flex items-center gap-6 text-white/80 text-sm font-bold uppercase tracking-widest">
+                  <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> {FEATURED_ARTICLE.readTime}</span>
+                  <span className="flex items-center gap-2"><UserIcon className="w-4 h-4" /> Chuyên gia NB</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Sidebar Latest */}
+          <div className="lg:col-span-3 flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#FF6B00] rounded-full animate-pulse" /> Mới nhất
+              </h3>
+              <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Xem tất cả</Button>
             </div>
-            {TAGS.map(tag => (
-              <button
-                key={tag}
-                onClick={() => setActiveTag(tag)}
-                className={`px-6 py-2 rounded-full text-sm font-bold transition-all shrink-0 ${
-                  activeTag === tag 
-                    ? 'bg-[#2D5A27] text-white shadow-lg shadow-[#2D5A27]/20' 
-                    : 'bg-white border border-slate-200 text-slate-500 hover:border-[#2D5A27]/40 hover:text-[#2D5A27]'
-                }`}
-              >
-                {tag}
+            <div className="space-y-6 flex-1">
+              {LATEST_SIDEBAR.map(article => (
+                <div key={article.id} className="flex gap-4 group cursor-pointer">
+                  <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-md">
+                    <img src={article.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Latest" />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <span className="text-[10px] font-black text-[#2D5A27] uppercase tracking-tighter mb-1">{article.category}</span>
+                    <h4 className="text-sm font-bold text-slate-800 leading-tight group-hover:text-[#2D5A27] transition-colors line-clamp-2">
+                      {article.title}
+                    </h4>
+                    <span className="text-[10px] text-slate-400 mt-1">{article.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── BODY SECTIONS ─────────────────────────────────────────────── */}
+        
+        {/* KHỐI 1: KỸ THUẬT & LẮP ĐẶT (Grid 3-col) */}
+        <section className="mb-24">
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-[#2D5A27]/10 rounded-2xl flex items-center justify-center">
+                <Wrench className="w-6 h-6 text-[#2D5A27]" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase tracking-wider">Kỹ Thuật & Thủy Lực</h2>
+                <p className="text-sm text-slate-400">Cách tiếp cận khoa học cho hệ thống tưới</p>
+              </div>
+            </div>
+            <div className="h-px bg-slate-200 flex-1 mx-8 hidden md:block" />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Reuse articles or specific tech ones */}
+            {[FEATURED_ARTICLE, ...LATEST_SIDEBAR.slice(2)].map(art => (
+              <ArticleCard key={art.id} article={art} />
+            ))}
+          </div>
+        </section>
+
+        {/* KHỐI 2: THỊ TRƯỜNG & KINH TẾ (Horizontal) */}
+        <section className="mb-24">
+           <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase tracking-wider">Thị Trường & Kinh Tế</h2>
+                <p className="text-sm text-slate-400">Phân tích biên lợi nhuận và xu hướng xuất khẩu</p>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-8">
+            {MARKET_NEWS.map(art => (
+              <ArticleCard key={art.id} article={art} horizontal />
+            ))}
+          </div>
+        </section>
+
+        {/* KHỐI 3: THƯ VIỆN VIDEO & SỔ TAY NÔNG HỌC (Carousel/Grid) */}
+        <section className="mb-24">
+           <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
+                <PlayCircle className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase tracking-wider">Thư Viện Video & Sổ Tay</h2>
+                <p className="text-sm text-slate-400">Hướng dẫn trực quan và cẩm nang nông học</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             <div className="relative aspect-video rounded-[30px] overflow-hidden group cursor-pointer shadow-xl">
+                <img src="https://images.unsplash.com/photo-1592861343717-3bf79ab44621?w=800&q=80" className="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="Video" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                   <div className="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform">
+                      <PlayCircle className="w-10 h-10 text-white fill-white" />
+                   </div>
+                </div>
+                <div className="absolute bottom-6 left-6 text-white">
+                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#FF6B00]">Video Hướng dẫn</span>
+                   <h4 className="text-xl font-bold">5 Bước châm phân Venturi chuẩn kỹ thuật</h4>
+                </div>
+             </div>
+             
+             <div className="grid grid-cols-1 gap-4">
+                {AGRONOMY_HANDBOOK.map(art => (
+                  <ArticleCard key={art.id} article={art} />
+                ))}
+             </div>
+          </div>
+        </section>
+
+        {/* ─── TAGGING & BOTTOM NAV ────────────────────────────────────────── */}
+        <section className="pt-20 border-t border-slate-200">
+           <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Thẻ Tag phổ biến</h4>
+           <div className="flex flex-wrap gap-3">
+             {['#KỹThuậtTưới', '#SầuRiêngXuấtKhẩu', '#BécBùÁp', '#NôngNghiệp4.0', '#DinhDưỡngCâyTrồng', '#ĐắkLắk', '#LâmĐồng', '#GiáCàPhê'].map(tag => (
+               <Badge key={tag} variant="outline" className="px-4 py-2 rounded-xl text-slate-500 border-slate-200 hover:border-[#2D5A27] hover:text-[#2D5A27] cursor-pointer transition-colors">
+                 {tag}
+               </Badge>
+             ))}
+           </div>
+        </section>
+
+      </div>
+
+      {/* Pagination Footer */}
+      <div className="container py-12 flex items-center justify-between">
+         <Button variant="outline" className="rounded-xl px-6 gap-2 text-slate-500">
+            <ChevronLeft className="w-4 h-4" /> TRƯỚC
+         </Button>
+         <div className="flex gap-2">
+            {[1, 2, 3, '...', 12].map((p, i) => (
+              <button key={i} className={`w-10 h-10 rounded-xl font-bold text-sm ${p === 1 ? 'bg-[#2D5A27] text-white' : 'text-slate-400 hover:bg-slate-100'}`}>
+                {p}
               </button>
             ))}
-          </div>
-        </div>
+         </div>
+         <Button variant="outline" className="rounded-xl px-6 gap-2 text-slate-500">
+            SAU <ChevronRight className="w-4 h-4" />
+         </Button>
       </div>
 
-      <div className="container py-12 space-y-20">
-        
-        {/* SECTION A: Kỹ Thuật Thực Chiến */}
-        <section>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900 font-display flex items-center gap-3">
-                <Wrench className="w-8 h-8 text-[#2D5A27]" />
-                Kỹ Thuật Thực Chiến
-              </h2>
-              <p className="text-slate-500 mt-2">Hướng dẫn chuyên sâu về lắp đặt, vận hành và bảo trì hệ thống.</p>
-            </div>
-            <Button variant="ghost" className="text-[#2D5A27] font-bold group">
-              Xem thêm <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {TECH_ARTICLES.map(article => (
-              <motion.div 
-                key={article.id}
-                whileHover={{ y: -8 }}
-                className="group"
-              >
-                <Card className="h-full bg-white border-0 shadow-sm hover:shadow-xl transition-all duration-500 rounded-[24px] overflow-hidden">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img 
-                      src={article.thumbnail} 
-                      alt={article.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                    />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-white/90 backdrop-blur text-[#2D5A27] border-0 px-3 py-1 font-bold text-[10px]">
-                        {article.tag}
-                      </Badge>
-                    </div>
-                    <div className="absolute bottom-4 right-4 bg-slate-900/60 backdrop-blur text-white px-2 py-1 rounded-lg text-[10px] flex items-center gap-1.5 font-medium">
-                      <Clock className="w-3 h-3" /> {article.readTime}
-                    </div>
-                  </div>
-                  <CardContent className="p-6 flex flex-col h-full">
-                    <div className="w-10 h-10 bg-[#2D5A27]/5 rounded-xl flex items-center justify-center mb-4">
-                      <article.icon className="w-5 h-5 text-[#2D5A27]" />
-                    </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#2D5A27] transition-colors leading-tight">
-                      {article.title}
-                    </h3>
-                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6">
-                      {article.desc}
-                    </p>
-                    <div className="mt-auto">
-                      <Button variant="link" className="p-0 h-auto text-slate-900 font-bold flex items-center gap-2 group-hover:text-[#2D5A27]">
-                        Đọc chi tiết <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION B: Thị Trường & Xu Hướng */}
-        <section>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900 font-display flex items-center gap-3">
-                <BarChart3 className="w-8 h-8 text-blue-600" />
-                Thị Trường & Xu Hướng
-              </h2>
-              <p className="text-slate-500 mt-2">Báo cáo, phân tích và định hướng phát triển nông nghiệp hiện đại.</p>
-            </div>
-            <Button variant="ghost" className="text-blue-600 font-bold group">
-              Xem thêm <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-
-          <div className="space-y-6">
-            {MARKET_ARTICLES.map(article => (
-              <motion.div 
-                key={article.id}
-                whileHover={{ x: 8 }}
-                className="group"
-              >
-                <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-all rounded-[24px] overflow-hidden">
-                  <CardContent className="p-4 md:p-6 flex flex-col md:flex-row gap-6">
-                    <div className="md:w-64 h-40 bg-slate-100 rounded-2xl overflow-hidden shrink-0">
-                      <img 
-                        src={article.thumbnail} 
-                        alt={article.title} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                      />
-                    </div>
-                    <div className="flex-1 flex flex-col py-2">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Badge className="bg-blue-50 text-blue-600 border-0 px-3 py-0.5 text-[10px] font-bold">
-                          {article.tag}
-                        </Badge>
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {article.readTime}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
-                        {article.title}
-                      </h3>
-                      <p className="text-slate-500 text-sm leading-relaxed mb-4 line-clamp-2">
-                        {article.desc}
-                      </p>
-                      <div className="mt-auto flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
-                            <article.icon className="w-4 h-4 text-blue-600" />
-                          </div>
-                          <span className="text-xs font-bold text-slate-400">Phân tích bởi Chuyên gia NB</span>
-                        </div>
-                        <Button size="sm" className="rounded-full bg-slate-900 text-white hover:bg-blue-600 px-6">
-                          Đọc ngay
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* NEWSLETTER / SUBSCRIBE */}
-        <div className="bg-[#2D5A27] rounded-[40px] p-12 text-white relative overflow-hidden text-center">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
-          <div className="relative z-10 max-w-2xl mx-auto">
-            <h3 className="text-3xl font-bold mb-4">Cập nhật tri thức mới nhất?</h3>
-            <p className="text-green-100 mb-8">Đăng ký để nhận báo cáo thị trường và hướng dẫn kỹ thuật độc quyền hàng tuần qua Zalo.</p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <input 
-                type="tel" 
-                placeholder="Nhập số điện thoại Zalo..." 
-                className="flex-1 h-14 bg-white/10 border border-white/20 rounded-2xl px-6 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/40"
-              />
-              <Button className="h-14 px-8 rounded-2xl bg-white text-[#2D5A27] font-bold hover:bg-green-50">
-                Đăng ký ngay
-              </Button>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </div>
   );
 }
 
-// Arrow icon since I need it and didn't import ArrowRight earlier but used it in Button
-function ArrowRight({ className }: { className?: string }) {
+function UserIcon({ className }: { className?: string }) {
   return (
-    <svg 
-      className={className} 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
     </svg>
   );
 }

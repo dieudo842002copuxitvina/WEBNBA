@@ -1,368 +1,364 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  Check, 
+  Phone, 
+  MessageCircle, 
   MapPin, 
+  ShieldAlert, 
   FileText, 
   Download, 
-  ShieldCheck, 
-  Phone, 
-  Navigation, 
-  ArrowRight, 
-  Store, 
-  BookOpen, 
-  BarChart3, 
-  Settings,
-  Share2,
-  ExternalLink,
-  MessageCircle,
-  Wrench
+  CheckCircle2, 
+  Truck, 
+  ChevronRight,
+  BadgeCheck,
+  Zap,
+  Info,
+  ArrowLeft
 } from 'lucide-react';
+import { products } from '@/data/mock';
+import { dealersData } from '@/data/dealersData';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { useFarmerProfile } from '@/hooks/useFarmerProfile';
-import { dealersData } from '@/data/dealersData';
-import { toast } from 'sonner';
 import SeoMeta from '@/components/SeoMeta';
 
-// --- MOCK DATA ---
-const PRODUCT_DATA = {
-  id: 'rivulis-s2000',
-  name: 'Béc tưới bù áp Rivulis S2000 (Israel)',
-  category: 'IRRIGATION',
-  brand: 'Rivulis',
-  country: 'Israel',
-  efficiency: 'Tiết kiệm 20% nước & năng lượng',
-  image: 'https://images.unsplash.com/photo-1592861343717-3bf79ab44621?w=800&q=80',
-  summary: 'Giải pháp tưới bù áp hàng đầu cho địa hình đốc, đảm bảo độ đồng đều 98% trên toàn diện tích.',
-  expertNote: 'Đạt hiệu quả cao nhất khi kết hợp với bộ lọc đĩa Azud 120 mesh để bảo vệ vòi phun khỏi cặn bẩn.',
-  specs: {
-    pressure: '1.5 - 3.5 Bar',
-    flow: '35 - 95 L/h',
-    radius: '3.5 - 5.0 m',
-    uniformity: '98%',
-    connection: 'Ngậm ống 6mm / Ren 21mm'
-  },
-  documents: [
-    { title: 'Catalogue Kỹ Thuật (PDF)', size: '2.4 MB' },
-    { title: 'Sơ Đồ Lắp Đặt Hệ Thống', size: '1.8 MB' },
-    { title: 'Quy Trình Vận Hành SOP', size: '0.9 MB' }
-  ]
-};
-
-const RELATED = [
-  { id: 'ldpe-16', name: 'Ống LDPE 16mm Dekko', price: 'Liên hệ', img: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?w=400&q=80' },
-  { id: 'filter-azud', name: 'Bộ lọc đĩa Azud 2"', price: 'Liên hệ', img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=80' }
+// Mock technical knowledge articles related to products
+const RELATED_ARTICLES = [
+  { id: '1', title: 'Quy trình lắp đặt béc tưới Rivulis S2000 cho vườn sầu riêng', tag: 'Kỹ thuật', readTime: '5 phút' },
+  { id: '2', title: 'Mẹo xử lý tắc nghẽn hệ thống tưới nhỏ giọt', tag: 'Bảo trì', readTime: '4 phút' },
+  { id: '3', title: 'SOP: 5 bước vận hành trạm bơm không gây kết tủa', tag: 'Vận hành', readTime: '6 phút' },
 ];
 
 export default function ProductDetailPage() {
-  const { id } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const { profile } = useFarmerProfile();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Logic O2O: Get 2 dealers in user province
-  const matchedDealers = useMemo(() => {
-    const province = profile.provinceName || 'Đồng Nai';
-    const matched = dealersData.filter(d => d.province === province && !d.isHeadOffice);
-    return matched.length >= 2 ? matched.slice(0, 2) : dealersData.filter(d => d.isHeadOffice || d.type === 'branch').slice(0, 2);
+  // Find product
+  const product = useMemo(() => {
+    return products.find(p => p.slug === slug) || products[0];
+  }, [slug]);
+
+  // Geo-Matching Logic: Find top 3 dealers within 50km
+  // Mocking distance calculation
+  const nearestDealers = useMemo(() => {
+    // In real app, use profile.lat/lng and calculate Haversine distance
+    // For mock, we'll just sort by province or take random nearby ones
+    const provinceMatch = dealersData.filter(d => d.province === profile.provinceName);
+    const others = dealersData.filter(d => d.province !== profile.provinceName);
+    
+    return [...provinceMatch, ...others].slice(0, 3).map(d => ({
+      ...d,
+      distance: (Math.random() * 15 + 2).toFixed(1), // Mock distance 2-17km
+      stockStatus: Math.random() > 0.3 ? 'in_stock' : 'pre_order'
+    }));
   }, [profile.provinceName]);
 
-  const dealerToContact = matchedDealers[0];
+  const hasNearbyDealers = nearestDealers.length > 0;
 
-  const handleShare = () => {
-    toast.info('Đã sao chép liên kết chia sẻ kỹ thuật sang Zalo.');
+  // Schema.org JSON-LD
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": [product.image],
+    "description": product.description,
+    "sku": product.id,
+    "brand": {
+      "@type": "Brand",
+      "name": "Nhà Bè Agri"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": window.location.href,
+      "priceCurrency": "VND",
+      "price": product.basePrice,
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "Nhà Bè Agri Network"
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-slate-50 pb-24">
       <SeoMeta 
-        title={`${PRODUCT_DATA.name} | Thông Số Kỹ Thuật & Giải Pháp Tưới`}
-        description={PRODUCT_DATA.summary}
+        title={`${product.name} | Chi tiết kỹ thuật & Đại lý | Nhà Bè Agri`}
+        description={product.description}
+        jsonLd={jsonLd}
       />
 
-      <div className="max-w-6xl mx-auto px-4 pt-8">
-        {/* HERO SECTION */}
-        <div className="grid lg:grid-cols-2 gap-12 mb-16">
-          {/* Left: Image */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="relative"
-          >
-            <div className="bg-white/80 backdrop-blur-md rounded-[2.5rem] border border-white p-8 shadow-xl shadow-slate-200/50 aspect-square flex items-center justify-center group overflow-hidden">
-              <img 
-                src={PRODUCT_DATA.image} 
-                alt={PRODUCT_DATA.name} 
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" 
-              />
-              <div className="absolute top-6 left-6 flex flex-col gap-2">
-                <Badge className="bg-slate-900 text-white border-0 px-3 py-1 text-xs">{PRODUCT_DATA.brand}</Badge>
-                <Badge className="bg-blue-50 text-blue-700 border-blue-100 border px-3 py-1 text-xs">🌐 {PRODUCT_DATA.country}</Badge>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right: Summary & CTA */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col justify-center"
-          >
-            <Badge className="w-fit bg-green-100 text-green-700 hover:bg-green-100 border-0 mb-4 px-3 py-1 font-bold">
-              ✨ {PRODUCT_DATA.efficiency}
-            </Badge>
-            <h1 className="text-4xl font-bold text-slate-900 font-display mb-4 leading-tight">
-              {PRODUCT_DATA.name}
-            </h1>
-            <p className="text-slate-500 text-lg mb-8 leading-relaxed">
-              {PRODUCT_DATA.summary}
-            </p>
-
-            <div className="bg-white/80 backdrop-blur-md border border-white rounded-3xl p-6 mb-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
-                  <Check className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</p>
-                  <p className="text-sm font-bold text-slate-800">
-                    Sẵn hàng tại các đại lý khu vực <span className="text-[#2D5A27]">{profile.provinceName || 'Đồng Nai'}</span>
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <Button 
-                  onClick={() => setIsModalOpen(true)}
-                  className="flex-1 h-14 rounded-2xl bg-[#F57C00] hover:bg-[#E65100] text-white font-bold text-base shadow-lg shadow-orange-500/20"
-                >
-                  📍 Nhận Báo Giá & Tư Vấn Kỹ Thuật
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  onClick={handleShare}
-                  className="w-14 h-14 rounded-2xl border-slate-200 text-slate-500 hover:bg-white"
-                >
-                  <Share2 className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* DETAILS TABS */}
-        <Tabs defaultValue="specs" className="mb-20">
-          <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start gap-8 rounded-none h-12 mb-8 px-0">
-            <TabsTrigger value="specs" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#2D5A27] data-[state=active]:text-[#2D5A27] rounded-none px-0 font-bold text-slate-400">
-              <BarChart3 className="w-4 h-4 mr-2" /> Thông Số Khoa Học
-            </TabsTrigger>
-            <TabsTrigger value="docs" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#2D5A27] data-[state=active]:text-[#2D5A27] rounded-none px-0 font-bold text-slate-400">
-              <BookOpen className="w-4 h-4 mr-2" /> Tài Liệu & SOP
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="specs">
-            <div className="grid lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <div className="bg-white/80 backdrop-blur-md border border-white rounded-3xl overflow-hidden shadow-sm">
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                      <tr>
-                        <th className="py-4 px-6 font-bold text-slate-600 uppercase text-xs tracking-widest">Đặc tính kỹ thuật</th>
-                        <th className="py-4 px-6 font-bold text-slate-600 uppercase text-xs tracking-widest text-right">Thông số / Đơn vị</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      <tr>
-                        <td className="py-4 px-6 text-slate-700 font-medium">Áp suất vận hành</td>
-                        <td className="py-4 px-6 text-slate-900 font-bold text-right">{PRODUCT_DATA.specs.pressure}</td>
-                      </tr>
-                      <tr>
-                        <td className="py-4 px-6 text-slate-700 font-medium">Lưu lượng chuẩn</td>
-                        <td className="py-4 px-6 text-slate-900 font-bold text-right">{PRODUCT_DATA.specs.flow}</td>
-                      </tr>
-                      <tr>
-                        <td className="py-4 px-6 text-slate-700 font-medium">Bán kính tưới thực tế</td>
-                        <td className="py-4 px-6 text-slate-900 font-bold text-right">{PRODUCT_DATA.specs.radius}</td>
-                      </tr>
-                      <tr>
-                        <td className="py-4 px-6 text-slate-700 font-medium">Độ đồng đều thủy lực (CU)</td>
-                        <td className="py-4 px-6 text-[#2D5A27] font-bold text-right">{PRODUCT_DATA.specs.uniformity}</td>
-                      </tr>
-                      <tr>
-                        <td className="py-4 px-6 text-slate-700 font-medium">Kiểu kết nối vật lý</td>
-                        <td className="py-4 px-6 text-slate-900 font-bold text-right">{PRODUCT_DATA.specs.connection}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div className="space-y-6">
-                <Card className="bg-[#2D5A27] text-white rounded-3xl border-0 p-6 shadow-xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
-                  <div className="flex gap-4 items-start relative z-10">
-                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
-                      <Settings className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg">Lưu ý từ chuyên gia</h4>
-                      <p className="text-sm text-green-100 mt-2 leading-relaxed">
-                        {PRODUCT_DATA.expertNote}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="docs">
-            <div className="grid md:grid-cols-3 gap-6">
-              {PRODUCT_DATA.documents.map((doc, idx) => (
-                <Card key={idx} className="bg-white border-slate-100 hover:border-blue-200 transition-all rounded-3xl group cursor-pointer">
-                  <CardContent className="p-6 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <FileText className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <h4 className="font-bold text-slate-800 mb-1">{doc.title}</h4>
-                    <p className="text-xs text-slate-400 mb-6">Định dạng PDF • {doc.size}</p>
-                    <Button variant="outline" className="w-full rounded-xl border-slate-200 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all">
-                      <Download className="w-4 h-4 mr-2" /> Tải về ngay
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        {/* O2O DEALER MATCHING */}
-        <div className="mb-20">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900 font-display">Hỗ Trợ Thi Công & Bảo Trì Tại Chỗ</h2>
-              <p className="text-slate-500 mt-2">Dựa trên vị trí của bạn, chúng tôi đề xuất các đối tác kỹ thuật tin cậy nhất.</p>
-            </div>
-            <Link to="/dai-ly">
-              <Button variant="link" className="text-[#2D5A27] font-bold p-0 flex items-center gap-2">
-                Xem toàn bộ mạng lưới <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {matchedDealers.map((dealer, idx) => (
-              <Card key={idx} className="bg-white/80 backdrop-blur-md rounded-3xl border border-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center">
-                        <Store className="w-7 h-7 text-slate-400" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-xl text-slate-800">{dealer.name}</h4>
-                        <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
-                          <MapPin className="w-3 h-3" /> {dealer.district}, {dealer.province}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge className="bg-green-100 text-green-700 border-0">Chuyên gia tưới</Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-slate-50 p-3 rounded-2xl">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Dịch vụ đặc thù</p>
-                      <p className="text-xs font-bold text-slate-700">Có thợ khảo sát tận rẫy</p>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-2xl">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Khoảng cách</p>
-                      <p className="text-xs font-bold text-slate-700">~{Math.floor(Math.random() * 10 + 2)} km</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button className="flex-1 rounded-xl bg-[#2D5A27] hover:bg-[#1f421b] text-white font-bold h-12">
-                      <Phone className="w-4 h-4 mr-2" /> Hotline
-                    </Button>
-                    <Button variant="outline" className="flex-1 rounded-xl border-slate-200 text-slate-600 h-12 font-bold">
-                      <Navigation className="w-4 h-4 mr-2" /> Chỉ đường
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* UPSELL SECTION */}
-        <div className="bg-slate-900 rounded-[3rem] p-12 text-white relative overflow-hidden">
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#2D5A27] rounded-full blur-[120px] opacity-20 translate-x-1/4 translate-y-1/4" />
-          <div className="relative z-10">
-            <h3 className="text-3xl font-bold font-display mb-8">Sản phẩm thường dùng kèm</h3>
-            <div className="grid md:grid-cols-2 gap-8">
-              {RELATED.map(item => (
-                <div key={item.id} className="flex gap-6 items-center p-4 rounded-[2rem] bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
-                  <div className="w-24 h-24 bg-white rounded-2xl overflow-hidden shrink-0">
-                    <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-lg mb-1">{item.name}</h4>
-                    <p className="text-orange-400 font-bold">{item.price}</p>
-                    <Button variant="link" className="text-white p-0 h-auto font-bold mt-2 flex items-center group/btn">
-                      Xem chi tiết <ExternalLink className="w-3 h-3 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* TOP NAVIGATION / BREADCRUMB */}
+      <div className="bg-white border-b border-slate-100 sticky top-16 z-30">
+        <div className="container h-14 flex items-center justify-between">
+          <Link to="/san-pham" className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#2D5A27]">
+            <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
+          </Link>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-[10px] uppercase tracking-wider">{product.category}</Badge>
           </div>
         </div>
       </div>
 
-      {/* DEALER CONTACT MODAL */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-[2rem] p-0 overflow-hidden border-0">
-          <div className="bg-[#2D5A27] p-8 text-white relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,white_0%,transparent_100%)]"></div>
-            <DialogHeader className="relative z-10">
-              <DialogTitle className="text-2xl font-bold font-display text-white">Kết nối Chuyên gia Khu vực</DialogTitle>
-              <DialogDescription className="text-green-100 text-sm mt-2">
-                Đại lý {dealerToContact?.name} sẽ trực tiếp hỗ trợ kỹ thuật và báo giá cho bạn.
-              </DialogDescription>
-            </DialogHeader>
+      <div className="container pt-8 lg:pt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          
+          {/* LEFT COLUMN: VISUALS & SPECS (7 cols) */}
+          <div className="lg:col-span-7 space-y-8">
+            {/* HERO VISUALS */}
+            <section>
+              <div className="aspect-video rounded-[2rem] overflow-hidden bg-white border border-slate-100 shadow-sm relative group">
+                <img 
+                  src={product.image || 'https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80'} 
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+                <button className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-white flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                  <Zap className="w-4 h-4 text-orange-500" /> Xem video thực tế tại rẫy
+                </button>
+              </div>
+              
+              {/* Thumbnail strip */}
+              <div className="flex gap-4 mt-4 overflow-x-auto no-scrollbar pb-2">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-white shrink-0 cursor-pointer hover:border-[#2D5A27] transition-all">
+                    <img src={product.image} className="w-full h-full object-cover opacity-60 hover:opacity-100" alt="thumb" />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* PRODUCT TITLE & PRICE */}
+            <section className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-[#2D5A27]/10 text-[#2D5A27] border-0">CHÍNH HÃNG</Badge>
+                {product.tags.map(tag => (
+                  <Badge key={tag} variant="outline" className="border-slate-200 text-slate-400 font-normal">#{tag}</Badge>
+                ))}
+              </div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 leading-tight font-display">
+                {product.name}
+              </h1>
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-extrabold text-[#2D5A27]">
+                  {product.basePrice.toLocaleString()}đ
+                </span>
+                <span className="text-sm text-slate-400 font-medium line-through">
+                  {(product.basePrice * 1.1).toLocaleString()}đ
+                </span>
+                <Badge className="bg-orange-100 text-orange-600 border-0">Đã gồm VAT</Badge>
+              </div>
+            </section>
+
+            {/* TECHNICAL WARNING BOX - Creating Trust */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="p-6 rounded-[2rem] border-2 border-red-100 bg-red-50/30 flex items-start gap-4"
+            >
+              <ShieldAlert className="w-8 h-8 text-red-500 shrink-0" />
+              <div>
+                <h4 className="font-bold text-red-700 text-sm uppercase tracking-wider mb-1">Lưu ý kỹ thuật quan trọng</h4>
+                <p className="text-red-600/80 text-sm leading-relaxed">
+                  Để thiết bị đạt hiệu suất tối ưu và độ bền cao nhất, yêu cầu áp suất nguồn nước tối thiểu đạt <strong>2.5 Bar</strong>. 
+                  Tránh sử dụng nguồn nước nhiễm phèn nặng mà không qua bộ lọc đĩa Azud.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* MASTER SPECS TABLE */}
+            <section>
+              <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Info className="w-5 h-5 text-[#2D5A27]" /> Thông số kỹ thuật khoa học
+              </h3>
+              <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+                <table className="w-full text-sm">
+                  <tbody className="divide-y divide-slate-50">
+                    {Object.entries(product.specs).map(([key, value]) => (
+                      <tr key={key} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4 font-bold text-slate-500 w-1/3">{key}</td>
+                        <td className="px-6 py-4 text-slate-900 font-medium">{value}</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td className="px-6 py-4 font-bold text-slate-500 w-1/3">Tiêu chuẩn độ bền</td>
+                      <td className="px-6 py-4 text-slate-900 font-medium">IP67, Chống tia UV 15 năm</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <Button variant="outline" className="h-14 rounded-2xl border-slate-200 gap-2 hover:bg-slate-100">
+                  <FileText className="w-4 h-4" /> Tải Catalogue PDF
+                </Button>
+                <Button variant="outline" className="h-14 rounded-2xl border-slate-200 gap-2 hover:bg-slate-100">
+                  <Download className="w-4 h-4" /> Sơ đồ lắp đặt kỹ thuật
+                </Button>
+              </div>
+            </section>
+
+            {/* USE CASE SCENARIOS */}
+            <section>
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Ứng dụng thực tế</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { label: 'Địa hình', val: 'Đất dốc / Đồi núi', icon: '⛰️' },
+                  { label: 'Cây trồng', val: 'Sầu riêng, Cà phê', icon: '🌳' },
+                  { label: 'Tính năng', val: 'Chống côn trùng', icon: '🐜' },
+                ].map((item, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-white border border-slate-100 flex items-center gap-3">
+                    <span className="text-2xl">{item.icon}</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">{item.label}</p>
+                      <p className="text-xs font-bold text-slate-800">{item.val}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
-          <div className="p-8">
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                  <ShieldCheck className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase">Đối tác ủy quyền</p>
-                  <p className="font-bold text-slate-800">{dealerToContact?.name}</p>
-                </div>
-              </div>
+
+          {/* RIGHT COLUMN: DEALER ROUTING (5 cols) */}
+          <div className="lg:col-span-5">
+            <div className="sticky top-28 space-y-6">
               
+              {/* DEALER MODULE - THE CONVERSION HEART */}
+              <Card className="rounded-[2.5rem] border-0 shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
+                <div className="p-8 pb-4">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-slate-900">Đại lý phân phối gần bạn</h2>
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 rounded-full text-[10px] font-bold text-[#2D5A27]">
+                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> ĐANG TRỰC
+                    </div>
+                  </div>
+
+                  {hasNearbyDealers ? (
+                    <div className="space-y-4">
+                      {nearestDealers.map((dealer, i) => (
+                        <motion.div 
+                          key={dealer.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                          className="p-5 rounded-3xl border border-slate-100 hover:border-[#2D5A27] transition-all group bg-slate-50/30 hover:bg-white"
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="font-bold text-slate-900 flex items-center gap-1.5 text-base">
+                                {dealer.name} <BadgeCheck className="w-4 h-4 text-blue-500" />
+                              </h4>
+                              <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                                <MapPin className="w-3 h-3" /> {dealer.district}, {dealer.province}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] font-black text-[#2D5A27] uppercase">{dealer.distance} km</span>
+                              <div className={`mt-1 text-[9px] font-bold px-2 py-0.5 rounded-full inline-block ${
+                                dealer.stockStatus === 'in_stock' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                              }`}>
+                                {dealer.stockStatus === 'in_stock' ? 'CÓ SẴN HÀNG' : 'ĐẶT HÀNG 2-3 NGÀY'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            <Button 
+                              className="flex-1 h-11 rounded-xl bg-[#2D5A27] hover:bg-[#1a3a18] text-white font-bold text-xs"
+                              asChild
+                            >
+                              <a href={`tel:${dealer.phone}`}>
+                                <Phone className="w-3.5 h-3.5 mr-1.5" /> Gọi điện
+                              </a>
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              className="flex-1 h-11 rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50 font-bold text-xs"
+                              asChild
+                            >
+                              <a 
+                                href={`https://zalo.me/${dealer.phone}?text=${encodeURIComponent(`Chào đại lý, tôi đang tìm hiểu sản phẩm ${product.name} trên Nhà Bè Agri, cửa hàng tư vấn giúp tôi nhé`)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5 mr-1.5" /> Chat Zalo
+                              </a>
+                            </Button>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    /* FALLBACK: NBA DIRECT */
+                    <div className="p-8 rounded-3xl border-2 border-dashed border-[#2D5A27]/20 bg-green-50/20 text-center">
+                      <div className="w-16 h-16 bg-[#2D5A27]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Truck className="w-8 h-8 text-[#2D5A27]" />
+                      </div>
+                      <h4 className="font-bold text-slate-900 mb-2">NBA Direct - Tổng Kho Phân Phối Trực Tiếp</h4>
+                      <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+                        Hiện chưa có đại lý ủy quyền trong bán kính 50km từ vị trí của bạn. Nhà Bè Agri sẽ hỗ trợ giao hàng trực tiếp từ tổng kho.
+                      </p>
+                      <Button className="w-full h-14 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-bold">
+                        <Phone className="w-5 h-5 mr-2" /> Kết nối Hotline Tổng Đài 24/7
+                      </Button>
+                      <p className="mt-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">Cam kết hỗ trợ Video Call 24/7</p>
+                    </div>
+                  )}
+                  
+                  <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sản phẩm chính hãng bởi</p>
+                    <img src="https://nhabeagri.com/wp-content/uploads/2021/04/logo-nhabeagri-dark.png" className="h-6 opacity-30 grayscale" alt="logo" />
+                  </div>
+                </div>
+              </Card>
+
+              {/* KNOWLEDGE INTEGRATION */}
               <div className="space-y-4">
-                <Button className="w-full h-14 rounded-xl bg-[#F57C00] hover:bg-[#E65100] text-white font-bold text-lg">
-                  <Phone className="w-5 h-5 mr-3" /> Gọi Báo Giá Ngay
-                </Button>
-                <Button variant="outline" className="w-full h-14 rounded-xl border-slate-200 text-slate-600 font-bold">
-                  <MessageCircle className="w-5 h-5 mr-3 text-green-500" /> Nhắn Tin Zalo Tư Vấn
-                </Button>
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider px-2">Kiến thức liên quan</h3>
+                <div className="space-y-3">
+                  {RELATED_ARTICLES.map(article => (
+                    <Link key={article.id} to="/tri-thuc" className="block group">
+                      <Card className="rounded-2xl border-slate-100 group-hover:border-[#2D5A27]/30 transition-all shadow-sm">
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-[#2D5A27]/5 transition-colors">
+                              <FileText className="w-5 h-5 text-slate-400 group-hover:text-[#2D5A27]" />
+                            </div>
+                            <div>
+                              <p className="text-[9px] font-bold text-[#2D5A27] uppercase mb-0.5">{article.tag}</p>
+                              <h5 className="text-xs font-bold text-slate-800 leading-snug">{article.title}</h5>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-[#2D5A27] transition-all" />
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
               </div>
-              
-              <p className="text-[10px] text-slate-400 text-center uppercase font-bold tracking-widest">
-                Đảm bảo chính hãng & Bảo hành 2 năm
-              </p>
+
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+        </div>
+      </div>
+      
+      {/* MOBILE FLOATING CTA - For Mobile-First excellence */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-50 lg:hidden">
+        <div className="bg-white/80 backdrop-blur-xl border border-white p-3 rounded-[2rem] shadow-2xl flex gap-2">
+          <Button className="flex-1 h-14 rounded-[1.5rem] bg-[#2D5A27] text-white font-bold shadow-lg">
+            <Phone className="w-5 h-5 mr-2" /> Gọi Chuyên Gia
+          </Button>
+          <Button variant="outline" className="flex-1 h-14 rounded-[1.5rem] border-blue-200 text-blue-600 font-bold bg-white/50">
+            <MessageCircle className="w-5 h-5 mr-2" /> Chat Zalo
+          </Button>
+        </div>
+      </div>
+
     </div>
   );
 }

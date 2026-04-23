@@ -190,12 +190,13 @@ export default function ProductCatalogPage() {
                     >
                       <Eye className="w-4 h-4 mr-2" /> Thông số kỹ thuật
                     </Button>
-                    <Button 
-                      className="w-full bg-[#FF6B00] hover:bg-[#E65A00] text-white font-semibold shadow-md shadow-orange-500/20"
-                      onClick={() => setSelectedProductForPrice(product)}
-                    >
-                      <Phone className="w-4 h-4 mr-2" /> Hỏi giá & Đại lý
-                    </Button>
+                    <Link to={`/san-pham/${product.name.toLowerCase().replace(/ /g, '-')}`} className="w-full">
+                      <Button 
+                        className="w-full bg-[#FF6B00] hover:bg-[#E65A00] text-white font-semibold shadow-md shadow-orange-500/20"
+                      >
+                        <Phone className="w-4 h-4 mr-2" /> Xem Chi Tiết & Đại Lý
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -109,7 +109,7 @@ const App = () => {
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<CustomerHomePage />} />
                   <Route path="/san-pham" element={<ProductCatalogPage />} />
-                  <Route path="/san-pham/:id" element={<ProductDetailPage />} />
+                  <Route path="/san-pham/:slug" element={<ProductDetailPage />} />
                   <Route path="/products" element={<ProductsPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/orders" element={<CustomerOrdersPage />} />

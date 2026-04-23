@@ -27,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link
-      to={`/products/${product.slug}`}
+      to={`/san-pham/${product.slug}`}
       onClick={() => trackEvent('product_view', { productId: product.id, productName: product.name, category: product.category })}
     >
       <Card className="group overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-slide-up h-full">

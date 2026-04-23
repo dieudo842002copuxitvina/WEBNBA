@@ -49,7 +49,7 @@ const SECTIONS = [
         icon: Calculator,
         badge: '🔥 Hot',
         badgeColor: 'bg-red-100 text-red-600',
-        path: '/cong-cu/du-toan-tuoi',
+        path: '/cong-cu/tinh-toan',
       },
       {
         id: 'ky-su-dinh-duong',
@@ -90,7 +90,7 @@ const SECTIONS = [
         icon: Bot,
         badge: '✨ AI',
         badgeColor: 'bg-purple-100 text-purple-700',
-        path: '/cong-cu/bac-si-ai',
+        path: '/tools/ai-doctor',
       },
       {
         id: 'lich-tuoi',

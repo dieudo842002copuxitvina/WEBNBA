@@ -1,179 +1,197 @@
-import { lazy, Suspense, useState } from 'react';
-import { commodityPrices, weatherData, marketAlerts, products } from '@/data/mock';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { TrendingUp, TrendingDown, MapPin, LineChart as LineChartIcon, ShieldCheck } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, Droplets, Wind, CloudRain, AlertTriangle, Lightbulb, Sprout, Activity, Loader2 } from 'lucide-react';
-import ProductCard from '@/components/ProductCard';
-import type { HeatLayer } from '@/components/MarketHeatmap';
-import PriceComparisonChart from '@/components/PriceComparisonChart';
-import MarketInsightsSidebar from '@/components/MarketInsightsSidebar';
 import SeoMeta from '@/components/SeoMeta';
-import { useEffect } from 'react';
-import { PriceTickerSkeleton } from '@/components/skeletons/PriceTickerSkeleton';
 
-const MarketHeatmap = lazy(() => import('@/components/MarketHeatmap'));
+// --- MOCK DATA ---
+const tickerData = [
+  { name: 'Cà phê Robusta', price: '120.000đ', change: '+2.5%', isUp: true },
+  { name: 'Hồ Tiêu', price: '150.000đ', change: '-1.2%', isUp: false },
+  { name: 'Sầu riêng Ri6', price: '130.000đ', change: '+5.0%', isUp: true },
+  { name: 'Lúa gạo ST25', price: '8.500đ', change: '0.0%', isUp: null },
+  { name: 'Tín chỉ Carbon', price: '15$', change: '+10%', isUp: true }
+];
+
+const tableData = [
+  { id: 1, name: 'Cà phê Robusta xô', region: 'Tây Nguyên', price: '120,500 đ/kg', change: '+2.5%', isUp: true, status: 'Đang tăng mạnh' },
+  { id: 2, name: 'Hồ Tiêu đen', region: 'Chư Sê, Gia Lai', price: '150,000 đ/kg', change: '-1.2%', isUp: false, status: 'Giảm nhẹ' },
+  { id: 3, name: 'Sầu riêng Ri6 (Loại 1)', region: 'Tiền Giang', price: '130,000 đ/kg', change: '+5.0%', isUp: true, status: 'Cầu vượt cung' },
+  { id: 4, name: 'Sầu riêng Dona', region: 'Đắk Lắk', price: '95,000 đ/kg', change: '+1.5%', isUp: true, status: 'Ổn định' },
+  { id: 5, name: 'Lúa khô ST25', region: 'ĐBSCL', price: '8,500 đ/kg', change: '0.0%', isUp: null, status: 'Đứng giá' }
+];
+
+const chartData = [
+  { day: 'T2', price: 115 },
+  { day: 'T3', price: 116 },
+  { day: 'T4', price: 115.5 },
+  { day: 'T5', price: 118 },
+  { day: 'T6', price: 119 },
+  { day: 'T7', price: 120.5 },
+  { day: 'CN', price: 120.5 }
+];
 
 export default function MarketPage() {
-  const [layer, setLayer] = useState<HeatLayer>('demand');
-  const [pricesLoading, setPricesLoading] = useState(true);
-  useEffect(() => {
-    const t = setTimeout(() => setPricesLoading(false), 400);
-    return () => clearTimeout(t);
-  }, []);
-  const suggestedProducts = products.filter(p =>
-    p.category === 'Hệ thống tưới' || p.category === 'Cảm biến IoT'
-  ).slice(0, 4);
-
   return (
-    <div className="min-h-screen bg-muted/20">
+    <div 
+      className="min-h-screen pb-24"
+      style={{
+        backgroundColor: '#F8FAFC', // slate-50
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d5a27' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}
+    >
       <SeoMeta
-        title="Trung tâm dữ liệu thị trường nông sản — AgriFlow"
-        description="Heatmap nhu cầu, mạng lưới đại lý, biến động giá cà phê / tiêu / sầu riêng theo tỉnh. Phân tích AI thời gian thực."
+        title="Trung Tâm Giá & Phân Tích Thị Trường Nông Sản"
+        description="Cập nhật giá cà phê hôm nay tại Đắk Lắk, Gia Lai chính xác nhất từ hệ thống đại lý Nhà Bè Agri. Xem biểu đồ xu hướng thị trường sầu riêng, hồ tiêu."
+        canonical="/thi-truong"
       />
-      <div className="container py-6">
-        <div className="animate-slide-up mb-5 flex items-end justify-between flex-wrap gap-3">
-          <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold flex items-center gap-2">
-              <Activity className="w-7 h-7 text-primary" /> Trung tâm dữ liệu thị trường
-            </h1>
-            <p className="text-muted-foreground text-sm mt-0.5">Heatmap nhu cầu · Mạng lưới đại lý · Giá nông sản — phân tích AI 24/7</p>
-          </div>
-          <Badge variant="secondary" className="text-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-success mr-1.5 animate-pulse" />
-            Live · cập nhật mỗi 60s
-          </Badge>
+
+      {/* 1. Daily Price Ticker (Marquee) */}
+      <div className="bg-[#2D5A27] text-white py-3 overflow-hidden border-b-4 border-[#F57C00] shadow-md">
+        <div className="flex whitespace-nowrap animate-[marquee_20s_linear_infinite] hover:[animation-play-state:paused]">
+          {[...tickerData, ...tickerData].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2 mx-8 text-sm font-semibold tracking-wider">
+              <span className="text-white/80">{item.name}:</span>
+              <span>{item.price}</span>
+              {item.isUp === true && <TrendingUp className="w-4 h-4 text-green-400 ml-1" />}
+              {item.isUp === false && <TrendingDown className="w-4 h-4 text-red-400 ml-1" />}
+              {item.isUp !== null && (
+                <span className={item.isUp ? 'text-green-400' : 'text-red-400'}>
+                  {item.change}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
+
+      <div className="max-w-6xl mx-auto px-4 mt-8">
+        <div className="text-center mb-10">
+          <Badge className="bg-[#F57C00]/10 text-[#F57C00] hover:bg-[#F57C00]/20 border-0 mb-3 px-3 py-1">Cập nhật lúc 08:00 AM</Badge>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 font-display mb-3">Trung Tâm Giá Nông Sản</h1>
+          <p className="text-slate-600 max-w-2xl mx-auto">Dữ liệu tham khảo trực tiếp từ chuỗi thu mua và đối tác chiến lược của Nhà Bè Agri.</p>
         </div>
 
-        {/* ============ MAIN: Heatmap (2/3) + Insights sidebar (1/3) ============ */}
-        <section className="grid grid-cols-12 gap-3 mb-5">
-          <div className="col-span-12 lg:col-span-8">
-            <Suspense fallback={
-              <div className="h-[500px] rounded-lg bg-muted/30 flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        <div className="grid lg:grid-cols-3 gap-8">
+          
+          {/* Left Column: Table & SEO (Spans 2 cols on lg) */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* 2. Main Market Table */}
+            <Card className="bg-white/80 backdrop-blur-md rounded-3xl border border-white/50 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm md:text-base">
+                  <thead className="bg-slate-100/50 text-slate-600">
+                    <tr>
+                      <th className="py-4 px-5 font-semibold">Tên Nông Sản</th>
+                      <th className="py-4 px-5 font-semibold">Vùng Miền</th>
+                      <th className="py-4 px-5 font-semibold text-right">Giá Hôm Nay</th>
+                      <th className="py-4 px-5 font-semibold text-center">Biến Động</th>
+                      <th className="py-4 px-5 font-semibold">Trạng Thái</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100/50">
+                    {tableData.map((row) => (
+                      <tr key={row.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="py-4 px-5 font-bold text-slate-800">{row.name}</td>
+                        <td className="py-4 px-5 text-slate-500">{row.region}</td>
+                        <td className="py-4 px-5 text-right font-semibold text-[#F57C00]">{row.price}</td>
+                        <td className="py-4 px-5">
+                          <div className={`flex items-center justify-center gap-1 font-semibold ${row.isUp === true ? 'text-green-600' : row.isUp === false ? 'text-red-500' : 'text-slate-400'}`}>
+                            {row.isUp === true && <TrendingUp className="w-4 h-4" />}
+                            {row.isUp === false && <TrendingDown className="w-4 h-4" />}
+                            {row.change}
+                          </div>
+                        </td>
+                        <td className="py-4 px-5">
+                          <Badge variant="outline" className="border-slate-200 text-slate-600 bg-white">
+                            {row.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            }>
-              <MarketHeatmap layer={layer} onLayerChange={setLayer} />
-            </Suspense>
-          </div>
-          <div className="col-span-12 lg:col-span-4">
-            <MarketInsightsSidebar />
-          </div>
-        </section>
+            </Card>
 
-        {/* ============ Comparison charts ============ */}
-        <section className="mb-6">
-          <PriceComparisonChart />
-        </section>
-
-        {/* ============ Commodity price cards ============ */}
-        <section className="mb-8">
-          <h2 className="font-display text-lg font-bold mb-3">📈 Bảng giá nông sản</h2>
-          {pricesLoading ? <PriceTickerSkeleton count={commodityPrices.length || 5} /> : (
-          <div className="lg:grid lg:grid-cols-5 lg:gap-3 flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-visible scrollbar-hide">
-            {commodityPrices.map((c) => {
-              const up = c.change >= 0;
-              return (
-                <Card key={c.name} className="hover:border-primary/40 transition shrink-0 w-[160px] snap-start lg:w-auto">
-                  <CardContent className="p-3">
-                    <p className="text-[11px] text-muted-foreground truncate">{c.name}</p>
-                    <p className="font-display font-bold text-lg mt-1">{c.currentPrice.toLocaleString('vi-VN')}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-[10px] text-muted-foreground">{c.unit}</span>
-                      <span className={`text-xs font-semibold flex items-center gap-0.5 ${up ? 'text-success' : 'text-destructive'}`}>
-                        {up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                        {up ? '+' : ''}{c.change}%
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {/* SEO Text */}
+            <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 flex gap-3 items-start">
+              <ShieldCheck className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+              <p className="text-sm text-slate-600 leading-relaxed">
+                <strong className="text-slate-800">Thông tin thị trường:</strong> Cập nhật giá cà phê hôm nay tại Đắk Lắk, Gia Lai chính xác nhất từ hệ thống đại lý Nhà Bè Agri. Giá sầu riêng và hồ tiêu mang tính chất tham khảo tại vườn, vui lòng liên hệ trực tiếp thương lái địa phương để có giá chốt thực tế.
+              </p>
+            </div>
           </div>
-          )}
-        </section>
 
-        {/* ============ Weather + AI alerts ============ */}
-        <section className="grid grid-cols-12 gap-3 mb-8">
-          <Card className="col-span-12 md:col-span-4 bg-gradient-to-br from-info/5 to-info/15">
-            <CardContent className="p-5">
-              <p className="text-sm text-muted-foreground mb-1">{weatherData.location}</p>
-              <p className="font-display text-4xl font-bold">{weatherData.current.temp}°C</p>
-              <p className="text-sm text-muted-foreground mt-1">{weatherData.current.condition}</p>
-              <div className="grid grid-cols-3 gap-3 mt-4">
-                <Stat icon={Droplets} label="Độ ẩm" value={`${weatherData.current.humidity}%`} />
-                <Stat icon={CloudRain} label="Mưa" value={`${weatherData.current.rainfall}mm`} />
-                <Stat icon={Wind} label="Gió" value={`${weatherData.current.wind}km/h`} />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-12 md:col-span-8">
-            <CardHeader className="pb-2"><CardTitle className="text-base font-display">Dự báo 7 ngày</CardTitle></CardHeader>
-            <CardContent>
-              {/* Mobile: horizontal scroll. Desktop: grid 7 cols */}
-              <div className="md:grid md:grid-cols-7 md:gap-2 flex gap-2 overflow-x-auto snap-x pb-1 scrollbar-hide">
-                {weatherData.forecast.map(f => (
-                  <div key={f.day} className="text-center p-2 rounded-lg hover:bg-muted transition-colors shrink-0 w-[68px] snap-start md:w-auto">
-                    <p className="text-xs font-medium text-muted-foreground">{f.day}</p>
-                    <p className="text-2xl my-1">{f.condition}</p>
-                    <p className="font-display font-bold text-sm">{f.temp}°C</p>
-                    <div className="flex items-center justify-center gap-0.5 mt-1">
-                      <Droplets className="w-2.5 h-2.5 text-info" />
-                      <span className="text-[10px] text-muted-foreground">{f.humidity}%</span>
-                    </div>
-                    {f.rainfall > 0 && <p className="text-[10px] text-info font-medium">{f.rainfall}mm</p>}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+          {/* Right Column: Chart & CTA */}
+          <div className="space-y-6">
+            
+            {/* 3. Market Trends Chart */}
+            <Card className="bg-white/80 backdrop-blur-md rounded-3xl border border-white/50 shadow-sm">
+              <CardContent className="p-6">
+                <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-6">
+                  <LineChartIcon className="w-5 h-5 text-[#2D5A27]" /> 
+                  Biểu đồ xu hướng Cà Phê (7 ngày)
+                </h3>
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
+                      <YAxis domain={['auto', 'auto']} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        formatter={(value: number) => [`${value}.000 đ`, 'Giá']}
+                        labelStyle={{ color: '#64748b', fontWeight: 'bold', marginBottom: '4px' }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="price" 
+                        stroke="#2D5A27" 
+                        strokeWidth={3}
+                        dot={{ r: 4, fill: '#2D5A27', strokeWidth: 2, stroke: '#fff' }}
+                        activeDot={{ r: 6, fill: '#F57C00', stroke: '#fff', strokeWidth: 2 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* ============ AI alerts ============ */}
-        <section className="mb-8">
-          <h2 className="font-display text-lg font-bold mb-3">🤖 Phân tích AI</h2>
-          <div className="grid md:grid-cols-2 gap-3">
-            {marketAlerts.map((alert, i) => (
-              <Card key={i} className={`border-l-4 ${alert.type === 'warning' ? 'border-l-warning' : 'border-l-success'}`}>
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${alert.type === 'warning' ? 'bg-warning/10' : 'bg-success/10'}`}>
-                      {alert.type === 'warning' ? <AlertTriangle className="w-4 h-4 text-warning" /> : <Lightbulb className="w-4 h-4 text-success" />}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-display font-semibold text-sm">{alert.title}</h3>
-                        <Badge variant="secondary" className="text-[10px]">{alert.region}</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{alert.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+            {/* 4. O2O Banner (Call to Action) */}
+            <Card className="bg-[#2D5A27] text-white rounded-3xl border-0 shadow-lg overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+              <CardContent className="p-8 relative z-10 text-center">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-xl mb-3 leading-tight">Bạn muốn chốt giá tốt?</h3>
+                <p className="text-green-100 text-sm mb-6 leading-relaxed">
+                  Trang bị hệ thống tưới tự động ngay hôm nay để tăng năng suất vụ tới. Đại lý của chúng tôi đã sẵn sàng tư vấn.
+                </p>
+                <Link to="/dai-ly">
+                  <Button className="w-full h-12 bg-[#F57C00] hover:bg-[#E65100] text-white font-bold rounded-xl shadow-lg shadow-orange-500/20">
+                    Liên hệ Đại lý gần nhất
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-        {/* ============ AI Product Suggestions ============ */}
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <Sprout className="w-5 h-5 text-primary" />
-            <h2 className="font-display text-lg font-bold">Gợi ý sản phẩm phù hợp</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {suggestedProducts.map(p => <ProductCard key={p.id} product={p} />)}
-          </div>
-        </section>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function Stat({ icon: Icon, label, value }: { icon: typeof Droplets; label: string; value: string; }) {
-  return (
-    <div className="text-center">
-      <Icon className="w-4 h-4 text-info mx-auto" />
-      <p className="text-xs text-muted-foreground mt-1">{label}</p>
-      <p className="font-semibold text-sm">{value}</p>
     </div>
   );
 }

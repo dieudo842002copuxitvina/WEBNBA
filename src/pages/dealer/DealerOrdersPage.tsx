@@ -2,7 +2,24 @@ import { orders } from '@/data/mock';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatVND } from '@/components/ProductCard';
 import { Badge } from '@/components/ui/badge';
-import { statusColors, statusLabels } from './DealerDashboard';
+const statusColors: Record<string, string> = {
+  pending: 'bg-warning/10 text-warning',
+  confirmed: 'bg-info/10 text-info',
+  processing: 'bg-primary/10 text-primary',
+  shipping: 'bg-accent/10 text-accent',
+  delivered: 'bg-success/10 text-success',
+  cancelled: 'bg-destructive/10 text-destructive',
+};
+
+const statusLabels: Record<string, string> = {
+  pending: 'Chờ xác nhận',
+  confirmed: 'Đã xác nhận',
+  processing: 'Đang xử lý',
+  shipping: 'Đang giao',
+  delivered: 'Hoàn thành',
+  cancelled: 'Đã hủy',
+};
+
 
 export default function DealerOrdersPage() {
   const dealerId = 'd-1';

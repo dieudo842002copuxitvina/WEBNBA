@@ -295,7 +295,7 @@ export default function AiDoctorPage() {
             <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center mx-auto mb-3">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
-            <DialogTitle className="text-2xl font-bold font-display text-white">Toa thuốc đã được chuẩn bị!</</DialogTitle>
+            <DialogTitle className="text-2xl font-bold font-display text-white">Toa thuốc đã được chuẩn bị!</DialogTitle>
           </div>
           
           <div className="p-6 pt-4">

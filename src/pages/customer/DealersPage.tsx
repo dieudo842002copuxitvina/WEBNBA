@@ -1,14 +1,52 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Phone, ArrowRight, CheckCircle2, ShieldCheck, Building2, Store, Clock } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Phone, CheckCircle2, ShieldCheck, Building2, Store, Search, Navigation } from 'lucide-react';
 import { dealersData, Dealer } from '@/data/dealersData';
 import { useFarmerProfile } from '@/hooks/useFarmerProfile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
-function DealerCard({ dealer, distance }: { dealer: Dealer; distance: number }) {
-  // Config Badge based on type
+// Fix Leaflet Default Icon issue
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+});
+
+// Custom markers
+const customMarkerHtml = (color: string) => `
+  <div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+    <div style="background-color: white; width: 6px; height: 6px; border-radius: 50%;"></div>
+  </div>
+`;
+
+const createIcon = (color: string) => L.divIcon({
+  className: 'custom-leaflet-marker',
+  html: customMarkerHtml(color),
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+});
+
+const hqIcon = createIcon('#F59E0B'); // amber-500
+const branchIcon = createIcon('#3B82F6'); // blue-500
+const dealerIcon = createIcon('#10B981'); // emerald-500
+
+function MapCenter({ position }: { position: [number, number] }) {
+  const map = useMap();
+  map.setView(position, map.getZoom());
+  return null;
+}
+
+function DealerCard({ dealer }: { dealer: Dealer }) {
   const typeConfig = {
     'head-office': { color: 'text-amber-600 bg-amber-50 border-amber-200', icon: ShieldCheck, label: 'Tổng Kho Trung Tâm', border: 'border-amber-400' },
     'branch': { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: Building2, label: 'Văn Phòng Đại Diện', border: 'border-blue-300' },
@@ -19,40 +57,33 @@ function DealerCard({ dealer, distance }: { dealer: Dealer; distance: number }) 
   const Icon = config.icon;
 
   return (
-    <Card className={`mb-4 overflow-hidden border-2 transition-all hover:shadow-lg ${config.border} bg-white`}>
+    <Card className={`mb-4 overflow-hidden border-2 transition-all hover:shadow-lg ${config.border} bg-white/80 backdrop-blur-md`}>
       <CardContent className="p-5">
         <div className="flex justify-between items-start mb-3">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge variant="outline" className={`font-semibold flex items-center gap-1 ${config.color}`}>
-                <Icon className="w-3 h-3" /> {config.label}
+                <Icon className="w-3.5 h-3.5" /> {config.label}
               </Badge>
-              <div className="flex items-center gap-1 text-xs text-[#2D5A27] font-medium bg-[#2D5A27]/10 px-2 py-0.5 rounded-full">
+              <div className="flex items-center gap-1.5 text-xs text-[#2D5A27] font-medium bg-[#2D5A27]/10 px-2.5 py-0.5 rounded-full border border-[#2D5A27]/20">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D5A27] opacity-75"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]"></span>
                 </span>
-                Sẵn sàng phục vụ
+                Sẵn sàng tư vấn
               </div>
             </div>
-            <h3 className="font-bold text-lg text-slate-800 leading-tight">{dealer.name}</h3>
-          </div>
-        </div>
-
-        <div className="space-y-2 mb-4">
-          <p className="text-sm text-slate-600 flex items-start gap-2">
-            <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-            <span>{dealer.address}, {dealer.district}, {dealer.province}</span>
-          </p>
-          <div className="flex items-center gap-4 text-sm text-slate-500">
-            <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> Cách bạn: ~{distance} km</span>
-            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {dealer.hours || 'Mở cửa: 8h00 - 17h00'}</span>
+            <h3 className="font-bold text-lg text-slate-800 leading-tight mb-1">{dealer.name}</h3>
+            <p className="text-sm text-slate-500 flex items-start gap-1.5">
+              <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+              <span>{dealer.address}, {dealer.district}, {dealer.province}</span>
+            </p>
           </div>
         </div>
 
         {/* Services Chips */}
-        {dealer.services && dealer.services.length > 0 && (
-          <div className="mb-5 flex flex-wrap gap-2">
+        {!dealer.isHeadOffice && dealer.services && dealer.services.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
             {dealer.services.map((service, idx) => (
               <span key={idx} className="flex items-center gap-1 bg-[#2D5A27]/5 text-[#2D5A27] text-xs px-2 py-1 rounded-md border border-[#2D5A27]/10 font-medium">
                 <CheckCircle2 className="w-3 h-3" /> {service}
@@ -61,12 +92,12 @@ function DealerCard({ dealer, distance }: { dealer: Dealer; distance: number }) 
           </div>
         )}
 
-        <div className="flex gap-3 mt-4">
-          <Button variant="outline" className="flex-1 border-[#2D5A27] text-[#2D5A27] hover:bg-[#2D5A27]/5 rounded-xl h-11 font-semibold">
+        <div className="flex gap-3 mt-2">
+          <Button className="flex-1 bg-[#2D5A27] hover:bg-[#1f421b] text-white rounded-xl h-11 font-semibold shadow-md">
             <Phone className="w-4 h-4 mr-2" /> Gọi ngay
           </Button>
-          <Button className="flex-1 bg-[#F57C00] hover:bg-[#E65100] text-white rounded-xl h-11 shadow-md shadow-orange-500/20 font-semibold border-0">
-            Chuyển Dự Toán <ArrowRight className="w-4 h-4 ml-2" />
+          <Button variant="outline" className="flex-1 border-[#2D5A27] text-[#2D5A27] hover:bg-[#2D5A27]/5 rounded-xl h-11 font-semibold">
+            <Navigation className="w-4 h-4 mr-2" /> Chỉ đường
           </Button>
         </div>
       </CardContent>
@@ -76,102 +107,155 @@ function DealerCard({ dealer, distance }: { dealer: Dealer; distance: number }) 
 
 export default function DealersPage() {
   const { profile, isLoaded } = useFarmerProfile();
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Logic Auto-Routing
   const sortedDealers = useMemo(() => {
-    const userProvince = profile.provinceName || 'Đồng Nai'; // Fallback for test if empty
+    let filtered = dealersData;
     
-    // Calculate mock distance: 
-    // Same district = 5-15km, same province = 20-50km, else 100+km
-    let dealersWithDistance = dealersData.map(d => {
-      let dist = 150 + Math.floor(Math.random() * 200);
-      let matchScore = 0;
-      if (d.province === userProvince) {
-        dist = 20 + Math.floor(Math.random() * 30);
-        matchScore = 2;
-        if (d.district === profile.districtName) {
-          dist = 2 + Math.floor(Math.random() * 10);
-          matchScore = 3;
-        }
-      }
-      if (d.isHeadOffice) matchScore = 1; // HQ fallback
-      return { dealer: d, distance: dist, score: matchScore };
-    });
-
-    // Check if we have any dealer in the same province
-    const hasLocalDealer = dealersWithDistance.some(d => d.dealer.province === userProvince && !d.dealer.isHeadOffice);
-
-    if (!hasLocalDealer) {
-      // Force Head Office to top
-      dealersWithDistance.forEach(d => {
-        if (d.dealer.isHeadOffice) d.score = 999;
-      });
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(d => 
+        d.name.toLowerCase().includes(q) || 
+        d.province.toLowerCase().includes(q) ||
+        d.district.toLowerCase().includes(q)
+      );
     }
 
-    // Sort by score desc, then distance asc
-    return dealersWithDistance.sort((a, b) => {
-      if (a.score !== b.score) return b.score - a.score;
-      return a.distance - b.distance;
+    const userProvince = profile.provinceName || ''; // Empty defaults to HQ logic later
+    
+    // Sort logic
+    return [...filtered].sort((a, b) => {
+      // 1. Same province matches go to top
+      const aProvMatch = a.province === userProvince ? 1 : 0;
+      const bProvMatch = b.province === userProvince ? 1 : 0;
+      if (aProvMatch !== bProvMatch) return bProvMatch - aProvMatch;
+
+      // 2. HQ always floats if no province match (handled below visually, but keep sorted)
+      return 0;
     });
-  }, [profile.provinceName, profile.districtName]);
+  }, [profile.provinceName, searchQuery]);
 
   if (!isLoaded) return null;
 
-  const hasLocalDealer = sortedDealers.some(d => d.dealer.province === profile.provinceName && !d.dealer.isHeadOffice);
+  const hasLocalDealer = dealersData.some(d => d.province === profile.provinceName && !d.isHeadOffice);
+  const showFallback = !hasLocalDealer && profile.provinceName && !searchQuery;
+
+  // Map center
+  let mapCenter: [number, number] = [10.762622, 106.660172]; // Default HCM
+  if (sortedDealers.length > 0 && sortedDealers[0].lat && sortedDealers[0].lng) {
+    mapCenter = [sortedDealers[0].lat, sortedDealers[0].lng];
+  }
 
   return (
-    <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-50">
+    <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-50 relative">
       
       {/* MAP LAYER (Background on mobile, Left pane on desktop) */}
-      <div className="absolute inset-0 z-0 md:relative md:w-[60%] md:h-full bg-[#E8F0F2]">
-        {/* Mock Map Image */}
-        <div className="w-full h-full bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=10.82,106.63&zoom=10&size=800x800&maptype=roadmap&style=feature:all|element:labels.text.fill|color:0x333333&style=feature:landscape|color:0xf5f5f5&style=feature:water|color:0xcbe6a3')] bg-cover bg-center opacity-70">
-          <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
-          {/* Mock markers */}
-          <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg z-10" />
-          <div className="absolute top-[40%] left-[60%] w-6 h-6 bg-[#10B981] rounded-full border-2 border-white shadow-lg flex items-center justify-center">
-            <Store className="w-3 h-3 text-white" />
-          </div>
-        </div>
+      <div className="absolute inset-0 z-0 md:relative md:w-[60%] md:h-full bg-slate-200">
+        <MapContainer 
+          center={mapCenter} 
+          zoom={6} 
+          style={{ height: '100%', width: '100%' }}
+          zoomControl={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          />
+          <MapCenter position={mapCenter} />
+          
+          {dealersData.map((dealer) => {
+            if (!dealer.lat || !dealer.lng) return null;
+            let icon = dealerIcon;
+            if (dealer.type === 'head-office') icon = hqIcon;
+            if (dealer.type === 'branch') icon = branchIcon;
+
+            return (
+              <Marker 
+                key={dealer.id} 
+                position={[dealer.lat, dealer.lng]}
+                icon={icon}
+              >
+                <Popup className="rounded-xl">
+                  <div className="p-1">
+                    <p className="font-bold text-slate-800 mb-1">{dealer.name}</p>
+                    <p className="text-xs text-slate-500">{dealer.address}, {dealer.province}</p>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
+        </MapContainer>
         
         {/* Header Glassmorphism */}
-        <div className="absolute top-0 left-0 right-0 p-4 z-20 pointer-events-none">
-          <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-sm rounded-2xl p-4 pointer-events-auto">
-            <h1 className="text-xl font-bold text-slate-800 font-display">Trạm Điều Phối Đại Lý</h1>
-            <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
-              <MapPin className="w-3 h-3" /> Vị trí của bạn: {profile.provinceName || 'Chưa xác định'}
-            </p>
+        <div className="absolute top-0 left-0 right-0 p-4 z-20 pointer-events-none md:max-w-md">
+          <div className="bg-white/80 backdrop-blur-xl border border-white shadow-lg rounded-2xl p-4 pointer-events-auto">
+            <h1 className="text-2xl font-bold text-slate-800 font-display">Mạng lưới Đại lý</h1>
+            <p className="text-sm text-slate-500 mt-1">Tìm nhà phân phối gần bạn nhất</p>
           </div>
         </div>
       </div>
 
       {/* LIST LAYER (BottomSheet on mobile, Right pane on desktop) */}
       <motion.div 
-        className="absolute bottom-0 left-0 right-0 z-40 h-[50vh] bg-slate-50 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] md:relative md:w-[40%] md:h-full md:rounded-none md:shadow-[-10px_0_40px_rgba(0,0,0,0.05)] flex flex-col"
+        className="absolute bottom-0 left-0 right-0 z-40 h-[60vh] bg-slate-50/95 backdrop-blur-xl rounded-t-[2rem] border-t border-white/50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] md:relative md:w-[40%] md:h-full md:rounded-none md:border-l md:shadow-[-10px_0_40px_rgba(0,0,0,0.05)] flex flex-col"
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
       >
         {/* Mobile Handle */}
-        <div className="w-full flex justify-center py-3 md:hidden shrink-0 cursor-grab active:cursor-grabbing">
-          <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+        <div className="w-full flex justify-center py-4 md:hidden shrink-0 cursor-grab active:cursor-grabbing">
+          <div className="w-16 h-1.5 bg-slate-300 rounded-full"></div>
         </div>
 
-        <div className="px-5 pb-3 shrink-0">
-          <h2 className="font-bold text-lg text-slate-800">Đại lý gần bạn nhất ({sortedDealers.length})</h2>
-          {!hasLocalDealer && profile.provinceName && (
-            <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm flex gap-3 shadow-sm">
-              <ShieldCheck className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
-              <p>Khu vực <strong>{profile.provinceName}</strong> hiện chưa có đại lý ủy quyền. <strong>Tổng kho Hồ Chí Minh</strong> sẽ trực tiếp xử lý và giao hàng tận rẫy cho bạn!</p>
+        <div className="px-5 pb-4 shrink-0">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Input 
+              placeholder="Tìm đại lý theo tỉnh thành..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12 bg-white rounded-xl border-slate-200 focus-visible:ring-[#2D5A27] text-base"
+            />
+          </div>
+
+          {showFallback && (
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex gap-3 shadow-sm">
+              <ShieldCheck className="w-6 h-6 shrink-0 text-amber-500" />
+              <p className="text-sm text-amber-800 leading-relaxed">
+                Khu vực <strong>{profile.provinceName}</strong> chưa có đại lý ủy quyền. <strong>Tổng kho Hồ Chí Minh</strong> sẽ trực tiếp hỗ trợ và giao hàng tận rẫy cho bạn!
+              </p>
             </div>
           )}
         </div>
 
         {/* Scrollable List */}
         <div className="flex-1 overflow-y-auto px-5 pb-6 custom-scrollbar">
-          {sortedDealers.map(({ dealer, distance }) => (
-            <DealerCard key={dealer.id} dealer={dealer} distance={distance} />
-          ))}
+          {showFallback && !searchQuery && (
+            <div className="mb-6 relative">
+              <div className="absolute -left-5 -right-5 top-1/2 -translate-y-1/2 h-px bg-slate-200 -z-10" />
+              <span className="bg-slate-50 px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Đơn vị xử lý mặc định</span>
+              <div className="mt-4">
+                {dealersData.filter(d => d.isHeadOffice).map(dealer => (
+                  <DealerCard key={dealer.id} dealer={dealer} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {sortedDealers
+              .filter(d => showFallback && !searchQuery ? !d.isHeadOffice : true) // Hide HQ if already shown in fallback
+              .map((dealer) => (
+                <DealerCard key={dealer.id} dealer={dealer} />
+            ))}
+            
+            {sortedDealers.length === 0 && (
+              <div className="text-center py-10 text-slate-500">
+                Không tìm thấy đại lý nào phù hợp.
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>

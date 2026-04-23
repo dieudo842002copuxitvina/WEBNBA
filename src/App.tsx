@@ -102,8 +102,8 @@ const App = () => {
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<CustomerHomePage />} />
                   <Route path="/san-pham" element={<ProductCatalogPage />} />
+                  <Route path="/san-pham/:id" element={<ProductDetailPage />} />
                   <Route path="/products" element={<ProductsPage />} />
-                  <Route path="/products/:slug" element={<ProductDetailPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/orders" element={<CustomerOrdersPage />} />
                   <Route path="/thi-truong" element={<MarketPage />} />

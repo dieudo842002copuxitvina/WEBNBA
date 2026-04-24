@@ -66,6 +66,7 @@ const DEFAULT_GEO: GeoWeightRule = {
 // ============== Storage ==============
 
 function readRules(): AnyRule[] {
+  if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(LS_RULES);
     if (!raw) return seedRules();
@@ -76,6 +77,7 @@ function readRules(): AnyRule[] {
 }
 
 function writeRules(rules: AnyRule[]): void {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(LS_RULES, JSON.stringify(rules));
   emit();
 }
@@ -106,16 +108,19 @@ function seedRules(): AnyRule[] {
       popupTitle: 'Nâng cấp hệ thống tưới tự động',
       popupBody: 'Giá cà phê đang tăng mạnh — đây là thời điểm vàng để đầu tư hệ thống tưới tự động, tăng năng suất 30%.',
       popupCta: 'Xem gói nâng cấp',
-      popupCtaTo: '/products?category=Hệ thống tưới',
+      popupCtaTo: '/san-pham?category=Hệ thống tưới',
       targetCropRegion: 'Tây Nguyên',
       createdAt: new Date().toISOString(),
     },
   ];
-  localStorage.setItem(LS_RULES, JSON.stringify(seed));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(LS_RULES, JSON.stringify(seed));
+  }
   return seed;
 }
 
 function readGeo(): GeoWeightRule {
+  if (typeof window === 'undefined') return DEFAULT_GEO;
   try {
     const raw = localStorage.getItem(LS_GEO);
     if (!raw) return DEFAULT_GEO;
@@ -126,6 +131,7 @@ function readGeo(): GeoWeightRule {
 }
 
 function writeGeo(g: GeoWeightRule): void {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(LS_GEO, JSON.stringify(g));
   emit();
 }

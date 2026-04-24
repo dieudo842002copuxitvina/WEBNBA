@@ -36,7 +36,7 @@ export default function DealerProductsPage() {
                     <tr key={dp.productId} className="border-b last:border-0">
                       <td className="py-3 pr-4 font-medium">{prod.name}</td>
                       <td className="py-3 pr-4 text-muted-foreground">{prod.category}</td>
-                      <td className="py-3 pr-4 text-muted-foreground">{formatVND(prod.basePrice)}</td>
+                      <td className="py-3 pr-4 text-muted-foreground">{formatVND(prod.price)}</td>
                       <td className="py-3 pr-4 font-display font-semibold">{formatVND(dp.price)}</td>
                       <td className="py-3 pr-4">{dp.stock} {prod.unit}</td>
                       <td className="py-3">

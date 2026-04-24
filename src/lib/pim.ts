@@ -54,7 +54,7 @@ export interface PimProduct {
   category: string;
   specialty_group_key: string | null;
   description: string | null;
-  base_price: number;
+  price: number;
   unit: string;
   image: string | null;
   stock: number;

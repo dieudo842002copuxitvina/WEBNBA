@@ -101,10 +101,10 @@ export default function AIInsightBanner() {
                     onClick={() => trackEvent('product_view', { productId: p.id, productName: p.name, source: 'ai_banner_live' })}
                     className="flex items-center gap-2 p-2.5 rounded-lg border bg-card hover:border-primary/40 hover:shadow-sm transition-all group min-h-[56px]"
                   >
-                    <span className="text-2xl">{p.category === 'Máy bơm' ? '⚡' : '💧'}</span>
+                    <span>{p.name.toLowerCase().includes('bơm') ? '⚡' : '💧'}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold truncate">{p.name}</p>
-                      <p className="text-[11px] text-primary font-bold">Từ {p.basePrice.toLocaleString('vi-VN')}đ</p>
+                      <p className="text-[11px] text-primary font-bold">Từ {p.price.toLocaleString('vi-VN')}đ</p>
                     </div>
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                   </Link>

@@ -28,7 +28,7 @@ interface Props {
 
 const blank = (): Omit<PimProduct, 'id' | 'created_at' | 'updated_at'> => ({
   slug: '', name: '', category: '', specialty_group_key: null,
-  description: '', base_price: 0, unit: 'cái', image: '', stock: 0,
+  description: '', price: 0, unit: 'cái', image: '', stock: 0,
   attributes: [], media: { ...EMPTY_MEDIA },
   tags: [], crop_tags: [], terrain_tags: [], active: true,
 });
@@ -108,7 +108,7 @@ export default function ProductEditDialog({ open, onOpenChange, product, special
     const payload = {
       ...form,
       slug: form.slug.trim() || slugify(form.name),
-      base_price: Number(form.base_price) || 0,
+      price: Number(form.price) || 0,
       stock: Number(form.stock) || 0,
       attributes: form.attributes.filter((a) => a.label.trim() && a.value.trim()),
       media: {
@@ -121,7 +121,7 @@ export default function ProductEditDialog({ open, onOpenChange, product, special
     const dbRow = {
       slug: payload.slug, name: payload.name, category: payload.category,
       specialty_group_key: payload.specialty_group_key, description: payload.description,
-      base_price: payload.base_price, unit: payload.unit, image: payload.image,
+      price: payload.price, unit: payload.unit, image: payload.image,
       stock: payload.stock,
       attributes: payload.attributes as unknown as never,
       media: payload.media as unknown as never,
@@ -204,8 +204,8 @@ export default function ProductEditDialog({ open, onOpenChange, product, special
               </div>
               <div>
                 <Label>Giá nền tảng (VND)</Label>
-                <Input type="number" value={form.base_price}
-                  onChange={(e) => setField('base_price', Number(e.target.value))} />
+                <Input type="number" value={form.price}
+                  onChange={(e) => setField('price', Number(e.target.value))} />
               </div>
               <div>
                 <Label>Đơn vị</Label>

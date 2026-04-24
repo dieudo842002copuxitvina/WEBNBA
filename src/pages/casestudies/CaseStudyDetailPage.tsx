@@ -177,7 +177,7 @@ export default function CaseStudyDetailPage() {
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-semibold line-clamp-2 group-hover:text-primary">{p.name}</p>
                           <p className="text-xs text-primary font-bold mt-0.5">
-                            {p.base_price > 0 ? `${p.base_price.toLocaleString('vi-VN')}đ` : 'Liên hệ'}
+                            {p.price > 0 ? `${p.price.toLocaleString('vi-VN')}đ` : 'Liên hệ'}
                           </p>
                         </div>
                       </Link>

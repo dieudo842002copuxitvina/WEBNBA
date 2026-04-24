@@ -151,7 +151,7 @@ export default function AdminProductsPage() {
                           <TableCell className="text-sm text-muted-foreground">{p.category || '—'}</TableCell>
                           <TableCell className="text-xs">{groupLabel(p.specialty_group_key)}</TableCell>
                           <TableCell className="text-right font-display font-semibold whitespace-nowrap">
-                            {fmtVND(p.base_price)}
+                            {fmtVND(p.price)}
                           </TableCell>
                           <TableCell className="text-center text-sm">
                             {p.stock} <span className="text-muted-foreground text-xs">{p.unit}</span>

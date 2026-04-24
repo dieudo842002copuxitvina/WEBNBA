@@ -3,71 +3,81 @@ import { Product, Dealer, DealerProduct, Order, AnalyticsInsight, Customer, News
 export const products: Product[] = [
   {
     id: 'p-1', name: 'Hệ thống tưới nhỏ giọt Netafim Pro', slug: 'tuoi-nho-giot-netafim-pro',
-    category: 'Hệ thống tưới', description: 'Hệ thống tưới nhỏ giọt chính xác cao, tiết kiệm 60% nước, phù hợp cho vườn cây ăn trái và rau màu. Thiết kế bền bỉ, dễ lắp đặt.',
-    basePrice: 4500000, unit: 'bộ', image: '/placeholder.svg', stock: 150,
+    sku: 'NET-PRO-01', category_id: 'Hệ thống tưới', brand_id: 'netafim',
+    price: 4500000, unit: 'bộ', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Hệ thống tưới nhỏ giọt chính xác cao, tiết kiệm 60% nước, phù hợp cho vườn cây ăn trái và rau màu. Thiết kế bền bỉ, dễ lắp đặt.',
     specs: { 'Diện tích phủ': '500m²', 'Lưu lượng': '2L/h', 'Áp suất': '1-3 bar', 'Vật liệu': 'PE cao cấp' },
     tags: ['best seller', 'tiết kiệm nước']
   },
   {
     id: 'p-2', name: 'Máy bơm Grundfos CR 15', slug: 'may-bom-grundfos-cr15',
-    category: 'Máy bơm', description: 'Máy bơm trục đứng đa tầng cánh, hiệu suất cao, phù hợp tưới tiêu quy mô lớn. Tiết kiệm điện, bền bỉ.',
-    basePrice: 18500000, unit: 'chiếc', image: '/placeholder.svg', stock: 35,
+    sku: 'GRU-CR15', category_id: 'Máy bơm', brand_id: 'grundfos',
+    price: 18500000, unit: 'chiếc', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Máy bơm trục đứng đa tầng cánh, hiệu suất cao, phù hợp tưới tiêu quy mô lớn. Tiết kiệm điện, bền bỉ.',
     specs: { 'Công suất': '3HP', 'Lưu lượng max': '15m³/h', 'Cột áp': '45m', 'Điện áp': '220V/380V' },
     tags: ['công nghiệp']
   },
   {
     id: 'p-3', name: 'Cảm biến độ ẩm đất IoT ST-100', slug: 'cam-bien-do-am-st100',
-    category: 'Cảm biến IoT', description: 'Cảm biến đo độ ẩm đất real-time, kết nối WiFi/LoRa, pin mặt trời. Theo dõi từ xa qua app.',
-    basePrice: 1200000, unit: 'chiếc', image: '/placeholder.svg', stock: 500,
+    sku: 'IOT-ST100', category_id: 'Cảm biến IoT', brand_id: 'agriflow',
+    price: 1200000, unit: 'chiếc', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Cảm biến đo độ ẩm đất real-time, kết nối WiFi/LoRa, pin mặt trời. Theo dõi từ xa qua app.',
     specs: { 'Kết nối': 'WiFi + LoRa', 'Pin': 'Solar', 'Độ sâu đo': '0-60cm', 'Độ chính xác': '±2%' },
     tags: ['best seller', 'IoT', 'smart farm']
   },
   {
     id: 'p-4', name: 'Ống nhỏ giọt Rivulis T-Tape', slug: 'ong-nho-giot-rivulis',
-    category: 'Hệ thống tưới', description: 'Ống nhỏ giọt dẹt, dễ lắp đặt, chi phí thấp cho rau màu và cây ngắn ngày.',
-    basePrice: 850000, unit: 'cuộn 500m', image: '/placeholder.svg', stock: 300,
+    sku: 'RIV-TTAPE', category_id: 'Hệ thống tưới', brand_id: 'rivulis',
+    price: 850000, unit: 'cuộn 500m', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Ống nhỏ giọt dẹt, dễ lắp đặt, chi phí thấp cho rau màu và cây ngắn ngày.',
     specs: { 'Đường kính': '16mm', 'Khoảng cách lỗ': '20cm', 'Dày': '0.2mm' },
     tags: ['tiết kiệm']
   },
   {
     id: 'p-5', name: 'Trạm thời tiết thông minh WS-200', slug: 'tram-thoi-tiet-ws200',
-    category: 'Cảm biến IoT', description: 'Trạm quan trắc thời tiết tự động: nhiệt độ, độ ẩm, gió, mưa, ánh sáng. Dashboard online.',
-    basePrice: 8500000, unit: 'bộ', image: '/placeholder.svg', stock: 45,
+    sku: 'WS-200-IOT', category_id: 'Cảm biến IoT', brand_id: 'agriflow',
+    price: 8500000, unit: 'bộ', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Trạm quan trắc thời tiết tự động: nhiệt độ, độ ẩm, gió, mưa, ánh sáng. Dashboard online.',
     specs: { 'Thông số đo': '6 loại', 'Kết nối': '4G + WiFi', 'Pin': 'Solar 10W' },
     tags: ['IoT', 'smart farm']
   },
   {
     id: 'p-6', name: 'Bộ điều khiển tưới tự động AC-8', slug: 'dieu-khien-tuoi-ac8',
-    category: 'Điều khiển', description: 'Bộ điều khiển 8 vùng tưới, lập trình linh hoạt, kết nối app điện thoại.',
-    basePrice: 3200000, unit: 'bộ', image: '/placeholder.svg', stock: 80,
+    sku: 'AC-8-CTRL', category_id: 'Điều khiển', brand_id: 'agriflow',
+    price: 3200000, unit: 'bộ', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Bộ điều khiển 8 vùng tưới, lập trình linh hoạt, kết nối app điện thoại.',
     specs: { 'Số vùng': '8', 'Kết nối': 'WiFi + Bluetooth', 'Nguồn': 'AC 220V' },
     tags: ['smart farm', 'tự động']
   },
   {
     id: 'p-7', name: 'Van điện từ Hunter PGV-101', slug: 'van-dien-tu-hunter',
-    category: 'Hệ thống tưới', description: 'Van điện từ chuyên dụng cho hệ thống tưới tự động, chống rò rỉ, bền bỉ ngoài trời.',
-    basePrice: 650000, unit: 'chiếc', image: '/placeholder.svg', stock: 200,
+    sku: 'HUN-PGV101', category_id: 'Hệ thống tưới', brand_id: 'hunter',
+    price: 650000, unit: 'chiếc', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Van điện từ chuyên dụng cho hệ thống tưới tự động, chống rò rỉ, bền bỉ ngoài trời.',
     specs: { 'Kích thước': '1 inch', 'Áp suất': '1-10 bar', 'Điện áp': '24V AC' },
     tags: ['tự động']
   },
   {
     id: 'p-8', name: 'Bộ lọc đĩa Arkal 2"', slug: 'bo-loc-dia-arkal',
-    category: 'Hệ thống tưới', description: 'Bộ lọc đĩa cho hệ thống tưới, lọc tạp chất, bảo vệ đầu tưới nhỏ giọt.',
-    basePrice: 1800000, unit: 'bộ', image: '/placeholder.svg', stock: 120,
+    sku: 'ARK-FIL-2', category_id: 'Hệ thống tưới', brand_id: 'arkal',
+    price: 1800000, unit: 'bộ', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Bộ lọc đĩa cho hệ thống tưới, lọc tạp chất, bảo vệ đầu tưới nhỏ giọt.',
     specs: { 'Kích thước': '2 inch', 'Lưu lượng': '25m³/h', 'Mesh': '120' },
     tags: ['best seller']
   },
   {
     id: 'p-9', name: 'Máy bơm năng lượng mặt trời Lorentz PS2-150', slug: 'may-bom-solar-lorentz',
-    category: 'Máy bơm', description: 'Máy bơm chìm chạy năng lượng mặt trời, không cần điện lưới, phù hợp vùng sâu vùng xa.',
-    basePrice: 25000000, unit: 'bộ', image: '/placeholder.svg', stock: 15,
+    sku: 'LOR-PS2-150', category_id: 'Máy bơm', brand_id: 'lorentz',
+    price: 25000000, unit: 'bộ', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Máy bơm chìm chạy năng lượng mặt trời, không cần điện lưới, phù hợp vùng sâu vùng xa.',
     specs: { 'Công suất': '1.5HP', 'Lưu lượng': '8m³/h', 'Cột áp': '30m', 'Tấm pin': '4x250W' },
     tags: ['năng lượng xanh', 'best seller']
   },
   {
     id: 'p-10', name: 'Bộ kit tưới vườn thông minh SmartGarden', slug: 'kit-tuoi-smart-garden',
-    category: 'Điều khiển', description: 'Bộ kit hoàn chỉnh cho vườn nhỏ: cảm biến + điều khiển + van + ống tưới. Cài đặt trong 30 phút.',
-    basePrice: 2800000, unit: 'bộ', image: '/placeholder.svg', stock: 200,
+    sku: 'SMART-G-KIT', category_id: 'Điều khiển', brand_id: 'agriflow',
+    price: 2800000, unit: 'bộ', thumbnail: '/placeholder.svg', gallery: [],
+    description: 'Bộ kit hoàn chỉnh cho vườn nhỏ: cảm biến + điều khiển + van + ống tưới. Cài đặt trong 30 phút.',
     specs: { 'Diện tích': '100m²', 'Số đầu tưới': '20', 'App': 'iOS + Android' },
     tags: ['dễ lắp đặt', 'smart farm']
   },

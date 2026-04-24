@@ -69,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </p>
               </div>
             ) : (
-              <p className="font-display font-bold text-base">{formatVND(product.base_price)}</p>
+              <p className="font-display font-bold text-base">{formatVND(product.price)}</p>
             )}
             <p className="text-[10px] text-muted-foreground">/{product.unit}</p>
           </div>

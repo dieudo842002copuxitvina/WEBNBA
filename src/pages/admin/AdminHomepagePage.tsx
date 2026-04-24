@@ -309,7 +309,7 @@ export default function AdminHomepagePage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-semibold truncate">{p.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{p.category}</p>
+                        <p className="text-[10px] text-muted-foreground">{p.category_id}</p>
                       </div>
                     </button>
                   );

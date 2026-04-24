@@ -7,7 +7,7 @@ export interface Product {
   sku: string;
   category_id: string;
   brand_id: string;
-  base_price: number;
+  price: number;
   unit: string;
   description: string;
   thumbnail: string;

@@ -74,7 +74,7 @@ export default function ProductDetailPage() {
       "@type": "Offer",
       "url": window.location.href,
       "priceCurrency": "VND",
-      "price": product.basePrice,
+      "price": product.price,
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
@@ -145,10 +145,10 @@ export default function ProductDetailPage() {
               </h1>
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-extrabold text-[#2D5A27]">
-                  {product.basePrice.toLocaleString()}đ
+                  {product.price.toLocaleString()}đ
                 </span>
                 <span className="text-sm text-slate-400 font-medium line-through">
-                  {(product.basePrice * 1.1).toLocaleString()}đ
+                  {(product.price * 1.1).toLocaleString()}đ
                 </span>
                 <Badge className="bg-orange-100 text-orange-600 border-0">Đã gồm VAT</Badge>
               </div>

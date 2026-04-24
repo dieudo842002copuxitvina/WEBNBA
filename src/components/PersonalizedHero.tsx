@@ -13,7 +13,7 @@ import { trackEvent } from '@/lib/tracking';
 interface PersonalizedHeroProps {
   search: string;
   setSearch: (v: string) => void;
-  searchResults: { id: string; name: string; slug: string; category: string }[];
+  searchResults: { id: string; name: string; slug: string; category_id: string }[];
   /** Admin-managed override for the default (non-personalized) variant */
   overrideHeadline?: string;
   overrideSubheadline?: string;
@@ -207,7 +207,7 @@ export default function PersonalizedHero({
                   <span className="text-2xl">🌱</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">{p.category}</p>
+                    <p className="text-xs text-muted-foreground">{p.category_id}</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-muted-foreground" />
                 </Link>

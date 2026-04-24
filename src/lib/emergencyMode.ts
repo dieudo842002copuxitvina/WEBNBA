@@ -36,7 +36,7 @@ export const EMERGENCY_PRESETS: Record<Exclude<EmergencyMode, 'off'>, EmergencyP
 /** Score a product for the active emergency mode. Higher = more relevant. */
 export function emergencyScore(p: Product, em: EmergencyConfig): number {
   if (em.mode === 'off') return 0;
-  const haystack = `${p.name} ${p.category} ${p.description ?? ''} ${(p.tags ?? []).join(' ')}`.toLowerCase();
+  const haystack = `${p.name} ${p.category_id} ${p.description ?? ''} ${(p.tags ?? []).join(' ')}`.toLowerCase();
   const keywords = em.mode === 'flood' ? em.flood_keywords : em.drought_keywords;
   return keywords.reduce((acc, k) => (k && haystack.includes(k.toLowerCase()) ? acc + 1 : acc), 0);
 }

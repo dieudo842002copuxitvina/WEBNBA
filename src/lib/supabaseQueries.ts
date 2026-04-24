@@ -37,7 +37,7 @@ export interface ProductEco {
   specs: string;
   cropTags: string[];
   tags: string[];
-  basePrice: number;
+  price: number;
   active: boolean;
 }
 
@@ -116,7 +116,7 @@ export async function getActiveProducts(): Promise<ProductEco[]> {
     .select(`
       id, name, slug, category, specialty_group_key,
       description, image, attributes, crop_tags, tags,
-      base_price, active,
+      price, active,
       product_specialty_groups ( key, label, icon, sort_order )
     `)
     .eq('active', true)
@@ -128,16 +128,16 @@ export async function getActiveProducts(): Promise<ProductEco[]> {
       id:                 p.id,
       name:               p.name,
       slug:               p.slug,
-      category:           p.category,
+      category:           p.category_id,
       specialtyGroupKey:  null,
-      specialtyGroupLabel: p.category,
+      specialtyGroupLabel: p.category_id,
       description:        p.description,
       imageUrl:           null,
-      badge:              deriveBadge(p.tags, p.category),
+      badge:              deriveBadge(p.tags, p.category_id),
       specs:              objectToSpecString(p.specs),
       cropTags:           p.tags,
       tags:               p.tags,
-      basePrice:          p.basePrice,
+      price:          p.price,
       active:             true,
     }));
   }
@@ -166,7 +166,7 @@ export async function getActiveProducts(): Promise<ProductEco[]> {
       specs:               objectToSpecString(attrs),
       cropTags:            row.crop_tags ?? [],
       tags:                row.tags ?? [],
-      basePrice:           row.base_price,
+      price:           row.price,
       active:              row.active,
     };
   });

@@ -16,12 +16,14 @@ function toCardProduct(p: PimProduct): Product {
     id: p.id,
     name: p.name,
     slug: p.slug,
-    category: p.category,
+    sku: p.id, // fallback
+    category_id: p.category,
+    brand_id: '',
     description: p.description ?? '',
-    basePrice: Number(p.base_price) || 0,
+    price: Number(p.price) || 0,
     unit: p.unit,
-    image: p.image ?? '',
-    stock: p.stock,
+    thumbnail: p.image ?? '',
+    gallery: [],
     specs: {},
     tags: p.tags ?? [],
   };

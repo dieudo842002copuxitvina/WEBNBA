@@ -456,7 +456,7 @@ export type Database = {
         Row: {
           active: boolean
           attributes: Json
-          base_price: number
+          price: number
           category: string
           created_at: string
           created_by: string | null
@@ -478,7 +478,23 @@ export type Database = {
         Insert: {
           active?: boolean
           attributes?: Json
-          base_price?: number
+          price?: number
+          category: string
+          created_at?: string
+          created_by?: string | null
+          crop_tags?: string[]
+          description?: string | null
+          id?: string
+          image?: string | null
+          media?: Json
+          name: string
+          slug: string
+          specialty_group_key?: string | null
+          stock?: number
+          tags?: string[]
+          terrain_tags?: string[]
+          unit?: string
+          price?: number
           category: string
           created_at?: string
           created_by?: string | null
@@ -500,7 +516,7 @@ export type Database = {
         Update: {
           active?: boolean
           attributes?: Json
-          base_price?: number
+          price?: number
           category?: string
           created_at?: string
           created_by?: string | null

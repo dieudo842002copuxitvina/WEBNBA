@@ -20,7 +20,8 @@ export type TrackEvent =
   | 'article_view'
   | 'article_product_click'
   | 'case_study_view'
-  | 'case_study_product_click';
+  | 'case_study_product_click'
+  | 'news_click';
 
 export type AdSource = 'facebook' | 'tiktok' | 'google' | 'organic' | 'direct';
 

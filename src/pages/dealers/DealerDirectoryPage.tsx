@@ -28,7 +28,7 @@ export default function DealerDirectoryPage() {
 
   // Auto-Filter
   const filteredDealers = useMemo(() => {
-    let result = dealers.filter(d => d.status === 'active');
+    let result = (dealers || []).filter(d => d.status === 'active');
     
     if (activeProvince) {
       // Normalize province matching just in case
@@ -40,7 +40,7 @@ export default function DealerDirectoryPage() {
 
     // Sort by distance if userLocation exists
     if (userLocation) {
-      result = result.map(d => ({
+      result = (result || []).map(d => ({
         ...d,
         distance: Math.round(haversineDistance(userLocation, { lat: d.lat, lng: d.lng }))
       })).sort((a: any, b: any) => a.distance - b.distance);
@@ -50,10 +50,10 @@ export default function DealerDirectoryPage() {
   }, [activeProvince, userLocation]);
 
   const mapCenter: [number, number] | null = useMemo(() => {
-    if (filteredDealers.length > 0 && activeProvince) {
+    if ((filteredDealers || []).length > 0 && activeProvince) {
       // average lat lng of filtered dealers to center map
-      const avgLat = filteredDealers.reduce((sum, d) => sum + d.lat, 0) / filteredDealers.length;
-      const avgLng = filteredDealers.reduce((sum, d) => sum + d.lng, 0) / filteredDealers.length;
+      const avgLat = (filteredDealers || []).reduce((sum, d) => sum + (d?.lat || 0), 0) / filteredDealers.length;
+      const avgLng = (filteredDealers || []).reduce((sum, d) => sum + (d?.lng || 0), 0) / filteredDealers.length;
       return [avgLat, avgLng];
     }
     return null;
@@ -114,10 +114,10 @@ export default function DealerDirectoryPage() {
           </p>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {filteredDealers.map(d => (
+          {(filteredDealers || []).map(d => (
             <DealerCard key={d.id} dealer={d} onTransfer={() => { setSelectedDealer(d); setIsModalOpen(true); }} />
           ))}
-          {filteredDealers.length === 0 && (
+          {(filteredDealers || []).length === 0 && (
             <div className="text-center p-8 text-muted-foreground">Không tìm thấy đại lý phù hợp.</div>
           )}
         </div>
@@ -153,10 +153,10 @@ export default function DealerDirectoryPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 pb-safe-offset-20">
-          {filteredDealers.map(d => (
+          {(filteredDealers || []).map(d => (
             <DealerCard key={d.id} dealer={d} onTransfer={() => { setSelectedDealer(d); setIsModalOpen(true); }} />
           ))}
-          {filteredDealers.length === 0 && (
+          {(filteredDealers || []).length === 0 && (
             <div className="text-center p-8 text-muted-foreground text-sm">Không tìm thấy đại lý phù hợp.</div>
           )}
         </div>
@@ -189,6 +189,7 @@ export default function DealerDirectoryPage() {
 // ─── DEALER CARD COMPONENT ──────────────────────────────────────────────────
 
 function DealerCard({ dealer, onTransfer }: { dealer: any, onTransfer: () => void }) {
+  if (!dealer) return null;
   const isOpen = Math.random() > 0.2; // Mock state
 
   return (

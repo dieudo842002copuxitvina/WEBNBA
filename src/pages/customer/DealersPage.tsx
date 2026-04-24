@@ -47,6 +47,7 @@ function MapCenter({ position }: { position: [number, number] }) {
 }
 
 function DealerCard({ dealer }: { dealer: Dealer }) {
+  if (!dealer) return null;
   const typeConfig = {
     'head-office': { color: 'text-amber-600 bg-amber-50 border-amber-200', icon: ShieldCheck, label: 'Tổng Kho Trung Tâm', border: 'border-amber-400' },
     'branch': { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: Building2, label: 'Văn Phòng Đại Diện', border: 'border-blue-300' },
@@ -110,18 +111,18 @@ function DealerCard({ dealer }: { dealer: Dealer }) {
                 Sẵn sàng tư vấn
               </div>
             </div>
-            <h3 className="font-bold text-lg text-slate-800 leading-tight mb-1">{dealer.name}</h3>
+            <h3 className="font-bold text-lg text-slate-800 leading-tight mb-1">{dealer?.name || 'Đại lý'}</h3>
             <p className="text-sm text-slate-500 flex items-start gap-1.5">
               <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-              <span>{dealer.address}, {dealer.district}, {dealer.province}</span>
+              <span>{(dealer?.address || '')}, {(dealer?.district || '')}, {(dealer?.province || '')}</span>
             </p>
           </div>
         </div>
 
         {/* Services Chips */}
-        {services.length > 0 && (
+        {(services || []).length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
-            {services.map((service, idx) => (
+            {(services || []).map((service, idx) => (
               <span key={idx} className="flex items-center gap-1.5 bg-green-50 text-green-700 text-[10px] px-2 py-1 rounded-md border border-green-100 font-bold uppercase tracking-wider">
                 <service.icon className="w-3 h-3" /> {service.label}
               </span>
@@ -152,10 +153,10 @@ export default function DealersPage() {
     
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(d => 
-        d.name.toLowerCase().includes(q) || 
-        d.province.toLowerCase().includes(q) ||
-        d.district.toLowerCase().includes(q)
+      filtered = (filtered || []).filter(d => 
+        (d.name || '').toLowerCase().includes(q) || 
+        (d.province || '').toLowerCase().includes(q) ||
+        (d.district || '').toLowerCase().includes(q)
       );
     }
 
@@ -175,12 +176,23 @@ export default function DealersPage() {
 
   if (!isLoaded) return null;
 
-  const hasLocalDealer = dealersData.some(d => d.province === profile.provinceName && !d.isHeadOffice);
+  if (!dealersData || dealersData.length === 0) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D5A27] mx-auto mb-4"></div>
+          <p className="text-slate-600 font-medium">Đang tải dữ liệu mạng lưới...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const hasLocalDealer = (dealersData || []).some(d => d.province === profile.provinceName && !d.isHeadOffice);
   const showFallback = !hasLocalDealer && profile.provinceName && !searchQuery;
 
   // Map center
   let mapCenter: [number, number] = [10.762622, 106.660172]; // Default HCM
-  if (sortedDealers.length > 0 && sortedDealers[0].lat && sortedDealers[0].lng) {
+  if ((sortedDealers || []).length > 0 && sortedDealers[0]?.lat && sortedDealers[0]?.lng) {
     mapCenter = [sortedDealers[0].lat, sortedDealers[0].lng];
   }
 
@@ -192,6 +204,7 @@ export default function DealersPage() {
         <MapContainer 
           center={mapCenter} 
           zoom={6} 
+          className="w-full h-full min-h-[500px] lg:h-screen"
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
         >
@@ -201,8 +214,8 @@ export default function DealersPage() {
           />
           <MapCenter position={mapCenter} />
           
-          {dealersData.map((dealer) => {
-            if (!dealer.lat || !dealer.lng) return null;
+          {(dealersData || []).map((dealer) => {
+            if (!dealer?.lat || !dealer?.lng) return null;
             let icon = dealerIcon;
             if (dealer.type === 'head-office') icon = hqIcon;
             if (dealer.type === 'branch') icon = branchIcon;
@@ -273,7 +286,7 @@ export default function DealersPage() {
               <div className="absolute -left-5 -right-5 top-1/2 -translate-y-1/2 h-px bg-slate-200 -z-10" />
               <span className="bg-slate-50 px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Đơn vị xử lý mặc định</span>
               <div className="mt-4">
-                {dealersData.filter(d => d.isHeadOffice).map(dealer => (
+                {(dealersData || []).filter(d => d.isHeadOffice).map(dealer => (
                   <DealerCard key={dealer.id} dealer={dealer} />
                 ))}
               </div>
@@ -281,7 +294,7 @@ export default function DealersPage() {
           )}
 
           <div className="space-y-4">
-            {sortedDealers
+            {(sortedDealers || [])
               .filter(d => showFallback && !searchQuery ? !d.isHeadOffice : true) // Hide HQ if already shown in fallback
               .map((dealer) => (
                 <DealerCard key={dealer.id} dealer={dealer} />

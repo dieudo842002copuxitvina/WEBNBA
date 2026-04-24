@@ -28,7 +28,7 @@ interface DealerPoint {
 
 // Real seed dealers + 50+ network points across Vietnam
 function generateDealers(): DealerPoint[] {
-  const points: DealerPoint[] = dealers.map(d => ({
+  const points: DealerPoint[] = (dealers || []).map(d => ({
     id: d.id, lat: d.lat, lng: d.lng, name: d.name, province: d.province, isReal: true,
   }));
   const clusters = [
@@ -166,7 +166,8 @@ export default function DealerNetworkMap() {
       },
     });
 
-    points.forEach(p => {
+    (points || []).forEach(p => {
+      if (!p?.lat || !p?.lng) return;
       const marker = L.marker([p.lat, p.lng], {
         icon: p.isReal ? realDealerIcon() : networkDealerIcon(),
       });
@@ -175,12 +176,12 @@ export default function DealerNetworkMap() {
         : null;
       marker.bindPopup(`
         <div style="min-width:140px;font-family:inherit;">
-          <strong style="font-size:13px;color:#0f172a;">${p.name}</strong><br/>
-          <span style="font-size:11px;color:#64748b;">📍 ${p.province}</span>
+          <strong style="font-size:13px;color:#0f172a;">${p?.name || 'Đại lý'}</strong><br/>
+          <span style="font-size:11px;color:#64748b;">📍 ${p?.province || ''}</span>
           ${distance ? `<br/><span style="font-size:11px;color:${PRIMARY};font-weight:600;">≈ ${distance} km</span>` : ''}
         </div>
       `);
-      marker.bindTooltip(`${p.name} · ${p.province}`, { direction: 'top', offset: [0, -8] });
+      marker.bindTooltip(`${p?.name || 'Đại lý'} · ${p?.province || ''}`, { direction: 'top', offset: [0, -8] });
       clusterGroup.addLayer(marker);
     });
     map.addLayer(clusterGroup);
@@ -201,8 +202,8 @@ export default function DealerNetworkMap() {
     };
   }, [points, userLocation, mapMode]);
 
-  const total = points.length;
-  const provinces = useMemo(() => new Set(points.map(p => p.province)).size, [points]);
+  const total = (points || []).length;
+  const provinces = useMemo(() => new Set((points || []).map(p => p?.province)).size, [points]);
 
   return (
     <Card className="relative overflow-hidden h-full bg-card border-border">

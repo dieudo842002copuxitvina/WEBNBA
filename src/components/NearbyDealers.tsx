@@ -40,7 +40,7 @@ export default function NearbyDealers({
   const customerProvince = useMemo(() => findNearestProvince(origin.lat, origin.lng).name, [origin.lat, origin.lng]);
 
   const { ranked, radiusUsed, expanded, isEmpty } = useMemo(() => {
-    const activeDealers = dealers.filter(d => d.status === 'active');
+    const activeDealers = (dealers || []).filter(d => d.status === 'active');
 
     const eligible = productId
       ? activeDealers.filter(d =>
@@ -64,16 +64,16 @@ export default function NearbyDealers({
 
     // Composite ranking — Admin-tunable weights from /admin/control
     const composite = rankByComposite(
-      results.map((r) => ({
+      (results || []).map((r) => ({
         result: r,
         stock: stockOf(r.item),
-        reputation: Math.min(1, Math.max(0, (r.item.rating ?? 0) / 5)),
+        reputation: Math.min(1, Math.max(0, (r.item?.rating ?? 0) / 5)),
       })),
       cc.weights,
       { maxRadiusKm: GEO_CONFIG.MAX_RADIUS_KM, inStockThreshold: cc.inStockThreshold },
     );
 
-    const ranked = composite.length > 0
+    const ranked = (composite || []).length > 0
       ? composite.map((c) => ({ item: c.item, distance: c.distance, stockStatus: c.stockStatus }))
       : rankByStockThenDistance(results, stockOf, cc.inStockThreshold);
 
@@ -87,24 +87,24 @@ export default function NearbyDealers({
     let cancelled = false;
     fetchDistanceMatrix(
       origin,
-      ranked.map((r) => ({ id: r.item.id, lat: r.item.lat, lng: r.item.lng })),
+      (ranked || []).map((r) => ({ id: r.item.id, lat: r.item.lat, lng: r.item.lng })),
     ).then((res) => { if (!cancelled) setMatrix(res); });
     return () => { cancelled = true; };
   }, [origin, ranked]);
 
   const matrixById = useMemo(() => {
     const map = new Map<string, { distance_m: number; duration_s: number | null }>();
-    matrix?.results.forEach((r) => map.set(r.id, { distance_m: r.distance_m, duration_s: r.duration_s }));
+    (matrix?.results || []).forEach((r) => map.set(r.id, { distance_m: r.distance_m, duration_s: r.duration_s }));
     return map;
   }, [matrix]);
 
   // Re-rank: keep stock-priority groups (in_stock first), sort each group by real driving distance.
   // Falls back to original Haversine ranking if matrix not loaded yet.
   const displayRanked = useMemo(() => {
-    if (matrixById.size === 0) return ranked.slice(0, maxResults);
-    const withDriving = ranked.map((r) => {
+    if (matrixById.size === 0) return (ranked || []).slice(0, maxResults);
+    const withDriving = (ranked || []).map((r) => {
       const m = matrixById.get(r.item.id);
-      return { r, drivingM: m?.distance_m ?? r.distance * 1000 };
+      return { r, drivingM: m?.distance_m ?? (r.distance || 0) * 1000 };
     });
     withDriving.sort((a, b) => {
       // in_stock before others
@@ -113,7 +113,7 @@ export default function NearbyDealers({
       if (sa !== sb) return sa - sb;
       return a.drivingM - b.drivingM;
     });
-    return withDriving.slice(0, maxResults).map((x) => x.r);
+    return (withDriving || []).slice(0, maxResults).map((x) => x.r);
   }, [ranked, matrixById, maxResults]);
 
   // Fallback: no dealers within 50km → NBA hotline
@@ -161,10 +161,11 @@ export default function NearbyDealers({
         </span>
       </div>
 
-      {displayRanked.map((result, i) => {
-        const dealer = result.item;
+      {(displayRanked || []).map((result, i) => {
+        const dealer = result?.item;
+        if (!dealer) return null;
         const dp = productId
-          ? dealerProducts.find(p => p.dealerId === dealer.id && p.productId === productId)
+          ? (dealerProducts || []).find(p => p.dealerId === dealer.id && p.productId === productId)
           : null;
         const isInStock = result.stockStatus === 'in_stock';
 

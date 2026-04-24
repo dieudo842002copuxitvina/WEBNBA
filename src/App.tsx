@@ -83,7 +83,7 @@ import ArticleDetailPage from "@/pages/library/ArticleDetailPage";
 import CaseStudiesPage from "@/pages/casestudies/CaseStudiesPage";
 import CaseStudyDetailPage from "@/pages/casestudies/CaseStudyDetailPage";
 import KnowledgeHubPage from "@/pages/customer/KnowledgeHubPage";
-import NotFound from "./pages/NotFound.tsx";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 

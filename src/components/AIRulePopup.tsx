@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ArrowRight } from 'lucide-react';
@@ -20,7 +22,7 @@ export default function AIRulePopup() {
 
   useEffect(() => {
     const check = () => {
-      if (sessionStorage.getItem(SESSION_KEY)) return;
+      if (typeof window !== 'undefined' && sessionStorage.getItem(SESSION_KEY)) return;
       const r = getActivePricePopup();
       if (!r) return;
       // Audience filter: shadow profile crop matches commodity, or no profile = show to all
@@ -37,7 +39,7 @@ export default function AIRulePopup() {
       // Delay popup so it doesn't appear instantly on load
       const t = setTimeout(() => {
         setOpen(true);
-        sessionStorage.setItem(SESSION_KEY, '1');
+        if (typeof window !== 'undefined') sessionStorage.setItem(SESSION_KEY, '1');
         trackEvent('page_view', { source: `ai_rule_popup_${r.id}` });
       }, 3500);
       return () => clearTimeout(t);
@@ -65,7 +67,7 @@ export default function AIRulePopup() {
         <div className="flex gap-2 justify-end">
           <Button variant="ghost" onClick={() => setOpen(false)}>Để sau</Button>
           <Button asChild onClick={() => { setOpen(false); trackEvent('category_click', { category: rule.popupTitle, source: 'ai_rule_popup' }); }}>
-            <Link to={rule.popupCtaTo}>{rule.popupCta} <ArrowRight className="ml-1 w-4 h-4" /></Link>
+            <Link href={rule.popupCtaTo}>{rule.popupCta} <ArrowRight className="ml-1 w-4 h-4" /></Link>
           </Button>
         </div>
       </DialogContent>

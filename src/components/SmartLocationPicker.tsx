@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * SmartLocationPicker.tsx
  * Offline-first location selector: Tỉnh → Huyện → Xã

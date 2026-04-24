@@ -1,6 +1,8 @@
+"use client";
+
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import BottomNav from './BottomNav';
 import { useLayoutMetrics } from '@/hooks/useLayoutMetrics';
 
@@ -17,7 +19,7 @@ interface AppShellProps {
  *   underlap the nav or get cut off by the notch.
  */
 export default function AppShell({ children }: AppShellProps) {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
   useLayoutMetrics();
 
   return (

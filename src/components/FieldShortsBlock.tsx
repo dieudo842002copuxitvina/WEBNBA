@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play, ChevronLeft, ChevronRight, Clapperboard } from 'lucide-react';

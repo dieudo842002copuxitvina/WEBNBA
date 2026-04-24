@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * useFarmerProfile.ts
  * "Smart Memory" hook — lưu & đọc profile nông dân từ localStorage.
@@ -5,6 +7,7 @@
  *   - Pre-fill tự động khi người dùng quay lại
  *   - Sync dữ liệu ngay khi nhập, không cần Submit
  */
+
 import { useCallback, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'nba_farmer_profile_v1';

@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState, ReactNode, useMemo } from 'react';
 
 /* =========================================================================
@@ -66,29 +68,33 @@ function normalize(w: GeoWeights): GeoWeights {
 }
 
 export function ControlCenterProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<ControlCenterConfig>(() => {
+  const [config, setConfig] = useState<ControlCenterConfig>(DEFAULT_CONFIG);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const p = JSON.parse(raw) as ControlCenterConfig;
-        return {
+        setConfig({
           ...DEFAULT_CONFIG,
           ...p,
           weights: { ...DEFAULT_WEIGHTS, ...(p.weights ?? {}) },
           emergency: { ...DEFAULT_CONFIG.emergency, ...(p.emergency ?? {}) },
-        };
+        });
       }
     } catch {}
-    return DEFAULT_CONFIG;
-  });
+    setIsInitialized(true);
+  }, []);
 
   useEffect(() => {
+    if (!isInitialized) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       // Broadcast for other tabs/components that don't subscribe to context
       window.dispatchEvent(new CustomEvent('controlcenter:update', { detail: config }));
     } catch {}
-  }, [config]);
+  }, [config, isInitialized]);
 
   const value = useMemo<Ctx>(() => ({
     config,
@@ -116,6 +122,7 @@ export function useControlCenter() {
    ========================================================================= */
 
 export function readControlCenterConfig(): ControlCenterConfig {
+  if (typeof window === 'undefined') return DEFAULT_CONFIG;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_CONFIG;

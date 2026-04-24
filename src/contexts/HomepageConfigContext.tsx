@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 export type BlockKey = 'ticker' | 'weather' | 'hero' | 'map' | 'bento' | 'diary';
@@ -98,21 +100,24 @@ interface Ctx {
 const HomepageConfigContext = createContext<Ctx | null>(null);
 
 export function HomepageConfigProvider({ children }: { children: ReactNode }) {
-  const [config, setConfigState] = useState<HomepageConfig>(() => {
+  const [config, setConfigState] = useState<HomepageConfig>(DEFAULT_CONFIG);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as HomepageConfig;
-        // Merge with defaults to pick up new fields
-        return { ...DEFAULT_CONFIG, ...parsed, blocks: mergeBlocks(parsed.blocks) };
+        setConfigState({ ...DEFAULT_CONFIG, ...parsed, blocks: mergeBlocks(parsed.blocks) });
       }
     } catch {}
-    return DEFAULT_CONFIG;
-  });
+    setIsInitialized(true);
+  }, []);
 
   useEffect(() => {
+    if (!isInitialized) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(config)); } catch {}
-  }, [config]);
+  }, [config, isInitialized]);
 
   const setConfig = (c: HomepageConfig) => setConfigState(c);
   const updateBlock = (key: BlockKey, patch: Partial<BlockConfig>) =>

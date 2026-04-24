@@ -214,7 +214,7 @@ export function trackEvent(event: TrackEvent, data?: Omit<TrackPayload, 'event' 
       ttclid: clickIds.ttclid,
     });
 
-    const projectId = (import.meta.env as Record<string, string | undefined>).VITE_SUPABASE_PROJECT_ID;
+    const projectId = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID;
     if (projectId) {
       const url = `https://${projectId}.supabase.co/functions/v1/track-event`;
       void fetch(url, {
@@ -239,7 +239,7 @@ export function trackEvent(event: TrackEvent, data?: Omit<TrackPayload, 'event' 
     }
   }
 
-  if (import.meta.env.DEV) {
+  if (process.env.NODE_ENV === 'development') {
     console.log(`[AgriFlow Track] ${event}`, { ...data, adSource: attr.adSource });
   }
 }

@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
 import { TrendingUp, TrendingDown, BookOpen, Camera, ArrowRight, Newspaper, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -96,7 +98,7 @@ export default function NewsHubSection() {
           </p>
         </div>
         <Button variant="ghost" size="sm" asChild className="hidden md:inline-flex">
-          <Link to="/tin-tuc">
+          <Link href="/tin-tuc">
             Xem tất cả <ArrowRight className="ml-1 w-3.5 h-3.5" />
           </Link>
         </Button>
@@ -124,7 +126,7 @@ export default function NewsHubSection() {
                   return (
                     <li key={c.name}>
                       <Link
-                        to="/thi-truong"
+                        href="/thi-truong"
                         className="flex items-center justify-between gap-2 py-2.5 group hover:bg-muted/40 -mx-2 px-2 rounded-md transition-colors"
                       >
                         <div className="min-w-0">
@@ -160,7 +162,7 @@ export default function NewsHubSection() {
               </ul>
 
               <Button variant="outline" size="sm" asChild className="w-full mt-3">
-                <Link to="/thi-truong">Xem chi tiết giá</Link>
+                <Link href="/thi-truong">Xem chi tiết giá</Link>
               </Button>
             </CardContent>
           </Card>
@@ -170,7 +172,7 @@ export default function NewsHubSection() {
         <section aria-labelledby="tech-col-heading">
           <Card className="h-full overflow-hidden hover:border-primary/40 transition-colors">
             <Link
-              to="/thu-vien"
+              href="/thu-vien"
               onClick={() => trackEvent('article_view', { source: 'news_hub_tech' })}
               className="block group"
             >
@@ -210,7 +212,7 @@ export default function NewsHubSection() {
             </Link>
             <div className="px-4 pb-4">
               <Button variant="outline" size="sm" asChild className="w-full">
-                <Link to="/thu-vien">Thư viện kỹ thuật <ArrowRight className="ml-1 w-3.5 h-3.5" /></Link>
+                <Link href="/thu-vien">Thư viện kỹ thuật <ArrowRight className="ml-1 w-3.5 h-3.5" /></Link>
               </Button>
             </div>
           </Card>
@@ -234,7 +236,7 @@ export default function NewsHubSection() {
                 {FIELD_PHOTOS.map((p) => (
                   <Link
                     key={p.id}
-                    to="/case-studies"
+                    href="/case-studies"
                     onClick={() => trackEvent('case_study_view', { source: 'news_hub_field' })}
                     className="group block"
                   >
@@ -263,7 +265,7 @@ export default function NewsHubSection() {
               </div>
 
               <Button variant="outline" size="sm" asChild className="w-full mt-3">
-                <Link to="/case-studies">Xem tất cả dự án <ArrowRight className="ml-1 w-3.5 h-3.5" /></Link>
+                <Link href="/case-studies">Xem tất cả dự án <ArrowRight className="ml-1 w-3.5 h-3.5" /></Link>
               </Button>
             </CardContent>
           </Card>

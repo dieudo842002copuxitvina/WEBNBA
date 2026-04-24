@@ -1,7 +1,9 @@
+"use client";
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Product } from '@/data/types';
 import { dealerProducts } from '@/data/mock';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { MapPin } from 'lucide-react';
 import { trackEvent } from '@/lib/tracking';
@@ -27,7 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link
-      to={`/san-pham/${product.slug}`}
+      href={`/san-pham/${product.slug}`}
       onClick={() => trackEvent('product_view', { productId: product.id, productName: product.name, category: product.category })}
     >
       <Card className="group overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-slide-up h-full">

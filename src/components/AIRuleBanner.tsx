@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CloudRain, ArrowRight, Sparkles } from 'lucide-react';
@@ -45,7 +47,7 @@ export default function AIRuleBanner() {
           </p>
         </div>
         <Button asChild className="bg-warning text-warning-foreground hover:bg-warning/90">
-          <Link to={rule.bannerCtaTo} onClick={() => trackEvent('category_click', { category: rule.bannerTitle, source: 'ai_weather_banner' })}>
+          <Link href={rule.bannerCtaTo} onClick={() => trackEvent('category_click', { category: rule.bannerTitle, source: 'ai_weather_banner' })}>
             {rule.bannerCta} <ArrowRight className="ml-1 w-4 h-4" />
           </Link>
         </Button>

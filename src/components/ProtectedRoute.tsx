@@ -1,5 +1,7 @@
-import { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+"use client";
+
+import { ReactNode, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth, type AppRole } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
@@ -10,9 +12,23 @@ interface Props {
 
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
   const { user, roles, loading } = useAuth();
-  const location = useLocation();
+  const pathname = usePathname();
+  const router = useRouter();
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.replace(`/auth?from=${encodeURIComponent(pathname)}`);
+      } else {
+        const ok = allowedRoles.some((r) => roles.includes(r));
+        if (!ok) {
+          router.replace('/');
+        }
+      }
+    }
+  }, [user, roles, loading, pathname, router, allowedRoles]);
+
+  if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/30">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -20,14 +36,8 @@ export default function ProtectedRoute({ children, allowedRoles }: Props) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
-  }
-
   const ok = allowedRoles.some((r) => roles.includes(r));
-  if (!ok) {
-    return <Navigate to="/" replace />;
-  }
+  if (!ok) return null;
 
   return <>{children}</>;
 }

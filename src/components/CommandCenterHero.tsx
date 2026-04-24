@@ -1,9 +1,11 @@
+"use client";
+
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import {
   Search, Thermometer, Droplets, CloudRain, Sparkles,
-  Calculator, LayoutGrid, Banknote, Stethoscope, Upload, ArrowRight, Loader2, X,
+  LayoutGrid, Banknote, Stethoscope, Upload, ArrowRight, Loader2, X,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -66,7 +68,7 @@ const CROPS = ['Sầu riêng', 'Cà phê', 'Hồ tiêu'];
  * - 3 AgriCalc tool cards mở Dialog
  */
 export default function CommandCenterHero() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { current, location } = weatherData;
   const [search, setSearch] = useState('');
   const [openTool, setOpenTool] = useState<ToolKey | null>(null);
@@ -92,7 +94,7 @@ export default function CommandCenterHero() {
     e.preventDefault();
     if (!search.trim()) return;
     trackEvent('search', { searchQuery: search });
-    navigate(`/products?q=${encodeURIComponent(search.trim())}`);
+    router.push(`/san-pham?q=${encodeURIComponent(search.trim())}`);
   };
 
   return (
@@ -280,7 +282,7 @@ function WeatherStat({
 function BomDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [area, setArea] = useState('');
   const [crop, setCrop] = useState<string | undefined>();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -289,7 +291,7 @@ function BomDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
     const params = new URLSearchParams();
     if (area) params.set('area', area);
     if (crop) params.set('crop', crop);
-    navigate(`/cong-cu/du-toan-1ha?${params.toString()}`);
+    router.push(`/cong-cu/du-toan-1ha?${params.toString()}`);
   };
 
   return (

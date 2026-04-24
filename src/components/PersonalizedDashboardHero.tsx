@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { 
   Droplet, 
   Leaf, 
@@ -106,7 +108,7 @@ export default function PersonalizedDashboardHero() {
         <div className="w-full">
           <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 text-center md:text-left">Lối tắt Nghiệp vụ</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Link to="/cong-cu" className="block">
+            <Link href="/cong-cu" className="block">
               <Button variant="outline" className="w-full h-14 justify-start text-base font-semibold border-border/50 bg-background hover:bg-muted shadow-sm">
                 <div className="w-8 h-8 rounded-full bg-[#2D5A27]/10 text-[#2D5A27] flex items-center justify-center mr-3 shrink-0">
                   <Calculator className="w-4 h-4" />
@@ -115,7 +117,7 @@ export default function PersonalizedDashboardHero() {
               </Button>
             </Link>
             
-            <Link to="/cong-cu" className="block">
+            <Link href="/cong-cu" className="block">
               <Button variant="outline" className="w-full h-14 justify-start text-base font-semibold border-border/50 bg-background hover:bg-muted shadow-sm">
                 <div className="w-8 h-8 rounded-full bg-[#B7410E]/10 text-[#B7410E] flex items-center justify-center mr-3 shrink-0">
                   <FlaskConical className="w-4 h-4" />
@@ -124,7 +126,7 @@ export default function PersonalizedDashboardHero() {
               </Button>
             </Link>
 
-            <Link to="/tools/ai-doctor" className="block">
+            <Link href="/tools/ai-doctor" className="block">
               <Button variant="outline" className="w-full h-14 justify-start text-base font-semibold border-border/50 bg-background hover:bg-muted shadow-sm">
                 <div className="w-8 h-8 rounded-full bg-success/10 text-success flex items-center justify-center mr-3 shrink-0">
                   <Bot className="w-4 h-4" />

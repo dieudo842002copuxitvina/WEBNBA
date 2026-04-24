@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+"use client";
+
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * useLayoutMetrics — Measures the heights of the sticky Header and the fixed

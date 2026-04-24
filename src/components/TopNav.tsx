@@ -1,3 +1,5 @@
+"use client";
+
 import { useApp } from '@/contexts/AppContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/data/types';
@@ -7,7 +9,9 @@ import {
   Sparkles, Activity, Briefcase, BookOpen, Award, ChevronDown, LogIn, Info,
   Wrench, Layers, Network,
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import { useState } from 'react';
 import TickerTape from './TickerTape';
 import ProductMegaMenu from './ProductMegaMenu';
@@ -25,7 +29,7 @@ const ECOSYSTEM: NavGroup = {
   label: 'Hệ sinh thái',
   icon: <Layers className="w-4 h-4" />,
   items: [
-    { label: 'Giải pháp', path: '/giai-phap', icon: <Lightbulb className="w-4 h-4" />,  desc: 'Trọn gói theo cây trồng & địa hình' },
+    { label: 'Giải pháp', path: '/giai-phap', icon: <Lightbulb className="w-4 h-4" />, desc: 'Trọn gói theo cây trồng & địa hình' },
     { label: 'Trung tâm Tri thức', path: '/tri-thuc', icon: <BookOpen className="w-4 h-4" />, desc: 'Toàn bộ bài viết, hướng dẫn & thị trường' },
   ],
 };
@@ -34,15 +38,15 @@ const NETWORK: NavGroup = {
   label: 'Mạng lưới',
   icon: <Network className="w-4 h-4" />,
   items: [
-    { label: 'Danh sách đại lý',       path: '/dai-ly',        icon: <MapPin className="w-4 h-4" />,    desc: 'Tìm đại lý gần bạn nhất' },
-    { label: 'Bằng chứng thành công',  path: '/case-studies',  icon: <Award className="w-4 h-4" />,     desc: 'Case study thi công thực tế' },
-    { label: 'Thị trường nông sản',    path: '/thi-truong',    icon: <TrendingUp className="w-4 h-4" />, desc: 'Giá cập nhật theo vùng' },
+    { label: 'Danh sách đại lý', path: '/dai-ly', icon: <MapPin className="w-4 h-4" />, desc: 'Tìm đại lý gần bạn nhất' },
+    { label: 'Bằng chứng thành công', path: '/case-studies', icon: <Award className="w-4 h-4" />, desc: 'Case study thi công thực tế' },
+    { label: 'Thị trường nông sản', path: '/thi-truong', icon: <TrendingUp className="w-4 h-4" />, desc: 'Giá cập nhật theo vùng' },
   ],
 };
 
 const STANDALONE: NavItem[] = [
   { label: 'Về chúng tôi', path: '/gioi-thieu', icon: <Info className="w-4 h-4" /> },
-  { label: 'Liên hệ',      path: '/lien-he',    icon: <Phone className="w-4 h-4" /> },
+  { label: 'Liên hệ', path: '/lien-he', icon: <Phone className="w-4 h-4" /> },
 ];
 
 const roleConfig: Record<UserRole, { label: string; color: string; nav: NavItem[] }> = {
@@ -51,35 +55,35 @@ const roleConfig: Record<UserRole, { label: string; color: string; nav: NavItem[
     label: 'Đại lý', color: 'bg-info',
     nav: [
       { label: 'Cổng Đối Tác', path: '/partner/dashboard', icon: <Briefcase className="w-4 h-4" /> },
-      { label: 'Dashboard',    path: '/dealer',            icon: <BarChart3 className="w-4 h-4" /> },
-      { label: 'Tồn kho',      path: '/dealer/inventory',  icon: <Package className="w-4 h-4" /> },
-      { label: 'Leads',        path: '/dealer/leads',      icon: <Inbox className="w-4 h-4" /> },
-      { label: 'Đơn hàng',     path: '/dealer/orders',     icon: <Truck className="w-4 h-4" /> },
-      { label: 'Sản phẩm',     path: '/dealer/products',   icon: <Package className="w-4 h-4" /> },
+      { label: 'Dashboard', path: '/dealer', icon: <BarChart3 className="w-4 h-4" /> },
+      { label: 'Tồn kho', path: '/dealer/inventory', icon: <Package className="w-4 h-4" /> },
+      { label: 'Leads', path: '/dealer/leads', icon: <Inbox className="w-4 h-4" /> },
+      { label: 'Đơn hàng', path: '/dealer/orders', icon: <Truck className="w-4 h-4" /> },
+      { label: 'Sản phẩm', path: '/dealer/products', icon: <Package className="w-4 h-4" /> },
     ],
   },
   admin: {
     label: 'Admin', color: 'bg-destructive',
     nav: [
-      { label: 'Dashboard',    path: '/admin',              icon: <BarChart3 className="w-4 h-4" /> },
-      { label: 'Leads',        path: '/admin/leads',        icon: <Inbox className="w-4 h-4" /> },
-      { label: 'Heatmap',      path: '/admin/heatmap',      icon: <MapPin className="w-4 h-4" /> },
-      { label: 'Hoa hồng',     path: '/admin/commission',   icon: <Coins className="w-4 h-4" /> },
-      { label: 'Duyệt ĐL',     path: '/admin/approvals',    icon: <UserPlus className="w-4 h-4" /> },
-      { label: 'Duyệt Thợ',    path: '/admin/installers',   icon: <Hammer className="w-4 h-4" /> },
-      { label: 'AI Rules',     path: '/admin/ai-rules',     icon: <Sparkles className="w-4 h-4" /> },
+      { label: 'Dashboard', path: '/admin', icon: <BarChart3 className="w-4 h-4" /> },
+      { label: 'Leads', path: '/admin/leads', icon: <Inbox className="w-4 h-4" /> },
+      { label: 'Heatmap', path: '/admin/heatmap', icon: <MapPin className="w-4 h-4" /> },
+      { label: 'Hoa hồng', path: '/admin/commission', icon: <Coins className="w-4 h-4" /> },
+      { label: 'Duyệt ĐL', path: '/admin/approvals', icon: <UserPlus className="w-4 h-4" /> },
+      { label: 'Duyệt Thợ', path: '/admin/installers', icon: <Hammer className="w-4 h-4" /> },
+      { label: 'AI Rules', path: '/admin/ai-rules', icon: <Sparkles className="w-4 h-4" /> },
       { label: 'BI Marketing', path: '/admin/marketing-bi', icon: <Activity className="w-4 h-4" /> },
-      { label: 'Đại lý',       path: '/admin/dealers',      icon: <Users className="w-4 h-4" /> },
-      { label: 'Sản phẩm',     path: '/admin/products',     icon: <Package className="w-4 h-4" /> },
-      { label: 'Cấu hình',     path: '/admin/config',       icon: <Wrench className="w-4 h-4" /> },
+      { label: 'Đại lý', path: '/admin/dealers', icon: <Users className="w-4 h-4" /> },
+      { label: 'Sản phẩm', path: '/admin/products', icon: <Package className="w-4 h-4" /> },
+      { label: 'Cấu hình', path: '/admin/config', icon: <Wrench className="w-4 h-4" /> },
     ],
   },
   fieldsales: {
     label: 'Thị trường', color: 'bg-warning',
     nav: [
-      { label: 'Dashboard',  path: '/fieldsales',              icon: <BarChart3 className="w-4 h-4" /> },
-      { label: 'Tạo đơn',    path: '/fieldsales/quick-order',  icon: <ClipboardList className="w-4 h-4" /> },
-      { label: 'Khách hàng', path: '/fieldsales/customers',    icon: <Users className="w-4 h-4" /> },
+      { label: 'Dashboard', path: '/fieldsales', icon: <BarChart3 className="w-4 h-4" /> },
+      { label: 'Tạo đơn', path: '/fieldsales/quick-order', icon: <ClipboardList className="w-4 h-4" /> },
+      { label: 'Khách hàng', path: '/fieldsales/customers', icon: <Users className="w-4 h-4" /> },
     ],
   },
 };
@@ -91,174 +95,175 @@ export default function TopNav() {
   const { hasRole } = useAuth();
   const isAdmin = hasRole('admin');
   const config = roleConfig[role];
-  const location = useLocation();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isCustomer = role === 'customer';
 
-  const isActiveGroup = (g: NavGroup) => g.items.some((i) => location.pathname.startsWith(i.path));
+  // Sửa lỗi location.pathname thành pathname
+  const isActiveGroup = (g: NavGroup) => g.items.some((i) => pathname?.startsWith(i.path));
 
   return (
     <>
       <div data-app-header="true" className="sticky top-0 z-50" style={{ paddingTop: 'var(--safe-top, 0px)' }}>
         <TickerTape />
         <header className="backdrop-blur-xl bg-background/70 border-b border-border/60 shadow-sm">
-        <div className="container flex items-center justify-between h-16 gap-4">
-          {/* Logo — prominent but compact */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-              <Sprout className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div className="leading-tight">
-              <span className="font-display font-bold text-base block">AgriFlow</span>
-              <span className="text-[10px] text-muted-foreground tracking-wide uppercase">Nhà Bè Agri</span>
-            </div>
-          </Link>
+          <div className="container flex items-center justify-between h-16 gap-4">
+            {/* Logo — prominent but compact */}
+            <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+                <Sprout className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div className="leading-tight">
+                <span className="font-display font-bold text-base block">AgriFlow</span>
+                <span className="text-[10px] text-muted-foreground tracking-wide uppercase">Nhà Bè Agri</span>
+              </div>
+            </Link>
 
-          {/* Desktop nav — grouped dropdowns for customers */}
-          {isCustomer ? (
-            <div className="hidden lg:flex items-center gap-2">
-              <ProductMegaMenu />
-              <NavigationMenu>
-              <NavigationMenuList className="gap-1">
-                {[ECOSYSTEM, NETWORK].map((group) => (
-                  <NavigationMenuItem key={group.label}>
-                    <NavigationMenuTrigger
-                      className={cn(
-                        'h-9 px-3 text-sm font-medium bg-transparent',
-                        isActiveGroup(group) && 'text-primary',
-                      )}
-                    >
-                      <span className="flex items-center gap-1.5">{group.icon}{group.label}</span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[420px] gap-1 p-3 sm:grid-cols-2">
-                        {group.items.map((item) => (
-                          <li key={item.path}>
-                            <NavigationMenuLink asChild>
-                              <Link
-                                to={item.path}
-                                className={cn(
-                                  'flex items-start gap-3 rounded-md p-3 transition-colors hover:bg-muted',
-                                  location.pathname === item.path && 'bg-primary/5',
-                                )}
-                              >
-                                <span className="mt-0.5 text-primary">{item.icon}</span>
-                                <span className="flex-1 min-w-0">
-                                  <span className="block text-sm font-semibold">{item.label}</span>
-                                  {item.desc && (
-                                    <span className="block text-xs text-muted-foreground mt-0.5 line-clamp-2">{item.desc}</span>
-                                  )}
-                                </span>
-                              </Link>
-                            </NavigationMenuLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
+            {/* Desktop nav — grouped dropdowns for customers */}
+            {isCustomer ? (
+              <div className="hidden lg:flex items-center gap-2">
+                <ProductMegaMenu />
+                <NavigationMenu>
+                  <NavigationMenuList className="gap-1">
+                    {[ECOSYSTEM, NETWORK].map((group) => (
+                      <NavigationMenuItem key={group.label}>
+                        <NavigationMenuTrigger
+                          className={cn(
+                            'h-9 px-3 text-sm font-medium bg-transparent',
+                            isActiveGroup(group) && 'text-primary',
+                          )}
+                        >
+                          <span className="flex items-center gap-1.5">{group.icon}{group.label}</span>
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <ul className="grid w-[420px] gap-1 p-3 sm:grid-cols-2">
+                            {group.items.map((item) => (
+                              <li key={item.path}>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    href={item.path}
+                                    className={cn(
+                                      'flex items-start gap-3 rounded-md p-3 transition-colors hover:bg-muted',
+                                      pathname === item.path && 'bg-primary/5',
+                                    )}
+                                  >
+                                    <span className="mt-0.5 text-primary">{item.icon}</span>
+                                    <span className="flex-1 min-w-0">
+                                      <span className="block text-sm font-semibold">{item.label}</span>
+                                      {item.desc && (
+                                        <span className="block text-xs text-muted-foreground mt-0.5 line-clamp-2">{item.desc}</span>
+                                      )}
+                                    </span>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                            ))}
+                          </ul>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    ))}
+
+                    {STANDALONE.map((item) => (
+                      <NavigationMenuItem key={item.path}>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href={item.path}
+                            className={cn(
+                              navigationMenuTriggerStyle(),
+                              'h-9 px-3 text-sm font-medium bg-transparent',
+                              pathname === item.path && 'text-primary',
+                            )}
+                          >
+                            {item.label}
+                          </Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    ))}
+                  </NavigationMenuList>
+                </NavigationMenu>
+              </div>
+            ) : (
+              // Role-specific nav (dealer/admin/fieldsales) — keep simple flat list
+              <nav className="hidden lg:flex items-center gap-1 flex-1 overflow-x-auto">
+                {config.nav.map((item) => (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
+                      pathname === item.path
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted',
+                    )}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </Link>
                 ))}
-
-                {STANDALONE.map((item) => (
-                  <NavigationMenuItem key={item.path}>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to={item.path}
-                        className={cn(
-                          navigationMenuTriggerStyle(),
-                          'h-9 px-3 text-sm font-medium bg-transparent',
-                          location.pathname === item.path && 'text-primary',
-                        )}
-                      >
-                        {item.label}
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
-            </div>
-          ) : (
-            // Role-specific nav (dealer/admin/fieldsales) — keep simple flat list
-            <nav className="hidden lg:flex items-center gap-1 flex-1 overflow-x-auto">
-              {config.nav.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
-                    location.pathname === item.path
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted',
-                  )}
-                >
-                  {item.icon}
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          )}
-
-          {/* Right cluster */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Admin-only BI Dashboard quick link */}
-            {isAdmin && (
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="hidden md:inline-flex text-muted-foreground hover:text-primary hover:bg-primary/5"
-                title="Báo cáo thông minh (BI Dashboard)"
-              >
-                <Link to="/admin/marketing-bi">
-                  <Activity className="w-4 h-4 mr-1.5" />
-                  BI
-                </Link>
-              </Button>
+              </nav>
             )}
 
-            {/* Dealer login — distinct outline CTA */}
-            {isCustomer && (
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="hidden md:inline-flex border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Link to="/auth?role=dealer">
-                  <LogIn className="w-4 h-4 mr-1.5" />
-                  Đại lý đăng nhập
-                </Link>
-              </Button>
-            )}
-
-            {/* Role switcher — kept for internal QA */}
-            <div className="hidden xl:flex items-center gap-1">
-              {roles.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRole(r)}
-                  className={cn(
-                    'text-[10px] px-2 py-0.5 rounded-full font-medium transition-all',
-                    role === r
-                      ? `${roleConfig[r].color} text-primary-foreground`
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80',
-                  )}
+            {/* Right cluster */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Admin-only BI Dashboard quick link */}
+              {isAdmin && (
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="hidden md:inline-flex text-muted-foreground hover:text-primary hover:bg-primary/5"
+                  title="Báo cáo thông minh (BI Dashboard)"
                 >
-                  {roleConfig[r].label}
-                </button>
-              ))}
-            </div>
+                  <Link href="/admin/marketing-bi">
+                    <Activity className="w-4 h-4 mr-1.5" />
+                    BI
+                  </Link>
+                </Button>
+              )}
 
-            {/* Mobile hamburger — 48px tap target */}
-            <button
-              className="lg:hidden h-12 w-12 flex items-center justify-center hover:bg-muted rounded-lg active:scale-95 transition-transform"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Menu"
-            >
-              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {/* Dealer login — distinct outline CTA */}
+              {isCustomer && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:inline-flex border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  <Link href="/auth?role=dealer">
+                    <LogIn className="w-4 h-4 mr-1.5" />
+                    Đại lý đăng nhập
+                  </Link>
+                </Button>
+              )}
+
+              {/* Role switcher — kept for internal QA */}
+              <div className="hidden xl:flex items-center gap-1">
+                {roles.map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setRole(r)}
+                    className={cn(
+                      'text-[10px] px-2 py-0.5 rounded-full font-medium transition-all',
+                      role === r
+                        ? `${roleConfig[r].color} text-primary-foreground`
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                    )}
+                  >
+                    {roleConfig[r].label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Mobile hamburger — 48px tap target */}
+              <button
+                className="lg:hidden h-12 w-12 flex items-center justify-center hover:bg-muted rounded-lg active:scale-95 transition-transform"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Menu"
+              >
+                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
-        </div>
         </header>
       </div>
 
@@ -276,7 +281,7 @@ export default function TopNav() {
             {/* Header */}
             <div className="flex items-center justify-between h-16 px-5 border-b shrink-0">
               <Link
-                to="/"
+                href="/"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2.5"
               >
@@ -309,11 +314,11 @@ export default function TopNav() {
                       </p>
                       <div className="grid grid-cols-2 gap-3">
                         {group.items.map((item) => {
-                          const active = location.pathname === item.path;
+                          const active = pathname === item.path;
                           return (
                             <Link
                               key={item.path}
-                              to={item.path}
+                              href={item.path}
                               onClick={() => setMobileOpen(false)}
                               className={cn(
                                 'flex flex-col items-start gap-2 rounded-xl border p-4 min-h-[96px] transition-colors',
@@ -344,7 +349,7 @@ export default function TopNav() {
                       {STANDALONE.map((item) => (
                         <Link
                           key={item.path}
-                          to={item.path}
+                          href={item.path}
                           onClick={() => setMobileOpen(false)}
                           className="flex items-center gap-3 px-4 min-h-[48px] rounded-lg text-base font-medium hover:bg-muted [&_svg]:w-5 [&_svg]:h-5"
                         >
@@ -359,11 +364,11 @@ export default function TopNav() {
                   {config.nav.map((item) => (
                     <Link
                       key={item.path}
-                      to={item.path}
+                      href={item.path}
                       onClick={() => setMobileOpen(false)}
                       className={cn(
                         'flex items-center gap-3 px-4 min-h-[52px] rounded-lg text-base font-medium transition-colors [&_svg]:w-5 [&_svg]:h-5',
-                        location.pathname === item.path
+                        pathname === item.path
                           ? 'bg-primary/10 text-primary'
                           : 'text-foreground hover:bg-muted',
                       )}
@@ -414,7 +419,7 @@ export default function TopNav() {
                   size="lg"
                   className="w-full border-primary/40 text-primary"
                 >
-                  <Link to="/auth?role=dealer" onClick={() => setMobileOpen(false)}>
+                  <Link href="/auth?role=dealer" onClick={() => setMobileOpen(false)}>
                     <LogIn className="w-5 h-5 mr-2" /> Đại lý đăng nhập
                   </Link>
                 </Button>

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -26,6 +28,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SeoMeta from '@/components/SeoMeta';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // --- Types & Data ---
 interface Article {
@@ -123,7 +128,7 @@ const AGRONOMY_HANDBOOK: Article[] = [
 
 // --- Sub-components ---
 
-const SafeImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
+const SafeImage = ({ src, alt, className, fill = false, width, height }: { src: string; alt: string; className?: string; fill?: boolean; width?: number; height?: number }) => {
   const [error, setError] = useState(false);
 
   if (error) {
@@ -136,11 +141,15 @@ const SafeImage = ({ src, alt, className }: { src: string; alt: string; classNam
   }
 
   return (
-    <img 
+    <Image 
       src={src} 
       alt={alt} 
       className={className} 
       onError={() => setError(true)}
+      fill={fill}
+      width={!fill ? width : undefined}
+      height={!fill ? height : undefined}
+      sizes={fill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined}
     />
   );
 };
@@ -157,8 +166,9 @@ const ArticleCard = ({ article, horizontal = false }: { article: Article; horizo
           src={article.image} 
           alt={article.title} 
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+          fill
         />
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-4 left-4 z-10">
           <Badge className="bg-[#2D5A27] text-white border-0 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
             {article.category}
           </Badge>
@@ -181,13 +191,15 @@ const ArticleCard = ({ article, horizontal = false }: { article: Article; horizo
         </p>
 
         {article.cta && (
-          <div className="mb-6 p-4 bg-[#2D5A27]/5 border border-[#2D5A27]/10 rounded-2xl flex items-center justify-between group/cta cursor-pointer hover:bg-[#2D5A27]/10 transition-colors">
-            <div className="flex items-center gap-3">
-              <article.cta.icon className="w-5 h-5 text-[#2D5A27]" />
-              <span className="text-sm font-bold text-[#2D5A27]">{article.cta.text}</span>
+          <Link href={article.cta.link}>
+            <div className="mb-6 p-4 bg-[#2D5A27]/5 border border-[#2D5A27]/10 rounded-2xl flex items-center justify-between group/cta cursor-pointer hover:bg-[#2D5A27]/10 transition-colors">
+              <div className="flex items-center gap-3">
+                <article.cta.icon className="w-5 h-5 text-[#2D5A27]" />
+                <span className="text-sm font-bold text-[#2D5A27]">{article.cta.text}</span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-[#2D5A27] group-hover/cta:translate-x-1 transition-transform" />
             </div>
-            <ArrowRight className="w-4 h-4 text-[#2D5A27] group-hover/cta:translate-x-1 transition-transform" />
-          </div>
+          </Link>
         )}
 
         <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
@@ -212,6 +224,7 @@ const ArticleCard = ({ article, horizontal = false }: { article: Article; horizo
 
 export default function KnowledgeHubPage() {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const router = useRouter();
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -271,9 +284,10 @@ export default function KnowledgeHubPage() {
                 src={FEATURED_ARTICLE.image} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
                 alt="Featured" 
+                fill
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent z-10" />
+              <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full z-20">
                 <Badge className="bg-[#FF6B00] text-white border-0 mb-3 md:mb-4 px-3 md:px-4 py-1 font-black text-[10px] md:text-xs">TIÊU ĐIỂM</Badge>
                 <h2 className="text-2xl md:text-5xl font-black text-white leading-tight mb-3 md:mb-4 drop-shadow-lg">
                   {FEATURED_ARTICLE.title}
@@ -298,9 +312,9 @@ export default function KnowledgeHubPage() {
             </div>
             <div className="space-y-4 md:space-y-6 flex-1">
               {LATEST_SIDEBAR.map(article => (
-                <div key={article.id} className="flex gap-4 group cursor-pointer active:scale-95 transition-transform">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shrink-0 shadow-md">
-                    <SafeImage src={article.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Latest" />
+                <div key={article.id} className="flex gap-4 group cursor-pointer active:scale-95 transition-transform" onClick={() => router.push(`/tri-thuc/${article.id}`)}>
+                  <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shrink-0 shadow-md">
+                    <SafeImage src={article.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Latest" fill />
                   </div>
                   <div className="flex flex-col justify-center">
                     <span className="text-[9px] md:text-[10px] font-black text-[#2D5A27] uppercase tracking-tighter mb-1">{article.category}</span>
@@ -333,7 +347,6 @@ export default function KnowledgeHubPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Reuse articles or specific tech ones */}
             {[FEATURED_ARTICLE, ...LATEST_SIDEBAR.slice(2)].map(art => (
               <ArticleCard key={art.id} article={art} />
             ))}
@@ -376,13 +389,13 @@ export default function KnowledgeHubPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
              <div className="relative aspect-video rounded-[24px] md:rounded-[30px] overflow-hidden group cursor-pointer shadow-xl active:scale-[0.98] transition-transform">
-                <SafeImage src="https://images.unsplash.com/photo-1592861343717-3bf79ab44621?w=800&q=80" className="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="Video" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <SafeImage src="https://images.unsplash.com/photo-1592861343717-3bf79ab44621?w=800&q=80" className="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="Video" fill />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
                    <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform">
                       <PlayCircle className="w-8 h-8 md:w-10 md:h-10 text-white fill-white" />
                    </div>
                 </div>
-                <div className="absolute bottom-6 left-6 text-white pr-6">
+                <div className="absolute bottom-6 left-6 text-white pr-6 z-20">
                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#FF6B00]">Video Hướng dẫn</span>
                    <h4 className="text-lg md:text-xl font-bold line-clamp-2">5 Bước châm phân Venturi chuẩn kỹ thuật</h4>
                 </div>

@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -62,7 +64,7 @@ export default function SteelProofWidget() {
           <p className="text-muted-foreground text-xs mt-0.5">Dự án thực tế · Khách hàng thật · Kết quả đo được</p>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link to="/case-studies" className="text-xs">Tất cả <ArrowRight className="ml-1 w-3 h-3" /></Link>
+          <Link href="/case-studies" className="text-xs">Tất cả <ArrowRight className="ml-1 w-3 h-3" /></Link>
         </Button>
       </div>
 
@@ -73,7 +75,7 @@ export default function SteelProofWidget() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {items.map((c, i) => (
-            <Link key={c.id} to={`/case-studies/${c.slug}`} className="group animate-slide-up"
+            <Link key={c.id} href={`/case-studies/${c.slug}`} className="group animate-slide-up"
               style={{ animationDelay: `${i * 80}ms` }}>
               <Card className="h-full overflow-hidden hover:shadow-lg transition-all hover:-translate-y-0.5">
                 <div className="aspect-[4/3] bg-muted relative overflow-hidden">

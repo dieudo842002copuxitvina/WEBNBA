@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Sprout, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +40,7 @@ const variants: Record<CommodityKey | 'default', HeroVariant> = {
     bgGradient: 'from-primary/40 via-foreground/20 to-foreground/40',
     emoji: '🌱',
     ctaLabel: 'Khám phá sản phẩm',
-    ctaTo: '/products',
+    ctaTo: '/san-pham',
   },
   'sau-rieng': {
     badge: '🤖 Đề xuất riêng cho bạn · Vườn sầu riêng',
@@ -47,7 +49,7 @@ const variants: Record<CommodityKey | 'default', HeroVariant> = {
     bgGradient: 'from-amber-500/15 via-background to-primary/10',
     emoji: '🌳',
     ctaLabel: 'Xem giải pháp sầu riêng',
-    ctaTo: '/products?category=Hệ thống tưới',
+    ctaTo: '/san-pham?category=Hệ thống tưới',
     ctaCategory: 'Hệ thống tưới',
   },
   'ca-phe': {
@@ -57,7 +59,7 @@ const variants: Record<CommodityKey | 'default', HeroVariant> = {
     bgGradient: 'from-amber-700/15 via-background to-primary/10',
     emoji: '☕',
     ctaLabel: 'Xem máy bơm công nghiệp',
-    ctaTo: '/products?category=Máy bơm',
+    ctaTo: '/san-pham?category=Máy bơm',
     ctaCategory: 'Máy bơm',
   },
   'tieu': {
@@ -67,7 +69,7 @@ const variants: Record<CommodityKey | 'default', HeroVariant> = {
     bgGradient: 'from-emerald-700/15 via-background to-primary/10',
     emoji: '🌶',
     ctaLabel: 'Xem cảm biến IoT',
-    ctaTo: '/products?category=Cảm biến IoT',
+    ctaTo: '/san-pham?category=Cảm biến IoT',
     ctaCategory: 'Cảm biến IoT',
   },
   'lua': {
@@ -77,7 +79,7 @@ const variants: Record<CommodityKey | 'default', HeroVariant> = {
     bgGradient: 'from-yellow-600/15 via-background to-primary/10',
     emoji: '🌾',
     ctaLabel: 'Xem máy bơm',
-    ctaTo: '/products?category=Máy bơm',
+    ctaTo: '/san-pham?category=Máy bơm',
     ctaCategory: 'Máy bơm',
   },
   'cao-su': {
@@ -87,7 +89,7 @@ const variants: Record<CommodityKey | 'default', HeroVariant> = {
     bgGradient: 'from-stone-600/15 via-background to-primary/10',
     emoji: '🌳',
     ctaLabel: 'Xem bộ điều khiển',
-    ctaTo: '/products?category=Điều khiển',
+    ctaTo: '/san-pham?category=Điều khiển',
     ctaCategory: 'Điều khiển',
   },
 };
@@ -180,7 +182,7 @@ export default function PersonalizedHero({
           <div className="mt-5 flex items-center gap-3 flex-wrap">
             <Button asChild size="lg" className="h-12 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
               <Link
-                to={v.ctaTo}
+                href={v.ctaTo}
                 onClick={() => v.ctaCategory && trackEvent('category_click', { category: v.ctaCategory, source: 'shadow_profile_hero' })}
               >
                 {v.ctaLabel} <ArrowRight className="ml-1 w-4 h-4" />
@@ -199,7 +201,7 @@ export default function PersonalizedHero({
               {searchResults.slice(0, 4).map(p => (
                 <Link
                   key={p.id}
-                  to={`/products/${p.slug}`}
+                  href={`/san-pham/${p.slug}`}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors"
                 >
                   <span className="text-2xl">🌱</span>

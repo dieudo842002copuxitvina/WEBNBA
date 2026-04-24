@@ -1,7 +1,9 @@
+"use client";
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, BadgeCheck, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { trackEvent } from '@/lib/tracking';
 
@@ -158,7 +160,7 @@ function ProductCard({ product, index }: { product: EcoProduct; index: number })
         {/* CTA — Safety Orange, always at bottom */}
         <div className="mt-auto pt-2">
           <Link
-            to={`/products/${product.slug}`}
+            href={`/san-pham/${product.slug}`}
             onClick={() => trackEvent('product_inquiry_click', { productId: product.id })}
             className="flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-[#FF6B00] hover:bg-[#E55C00] active:scale-95 transition-all duration-200 shadow-sm shadow-[#FF6B00]/30"
           >
@@ -201,7 +203,7 @@ export default function ProductEcosystemBlock() {
         </div>
 
         <Button variant="outline" size="sm" asChild className="hidden md:inline-flex shrink-0">
-          <Link to="/products">
+          <Link href="/san-pham">
             Xem toàn bộ sản phẩm <ChevronRight className="ml-1 w-3.5 h-3.5" />
           </Link>
         </Button>
@@ -240,7 +242,7 @@ export default function ProductEcosystemBlock() {
       {/* Mobile view-all button */}
       <div className="mt-6 md:hidden">
         <Button variant="outline" className="w-full" asChild>
-          <Link to="/products">
+          <Link href="/san-pham">
             Xem toàn bộ sản phẩm <ChevronRight className="ml-1 w-4 h-4" />
           </Link>
         </Button>

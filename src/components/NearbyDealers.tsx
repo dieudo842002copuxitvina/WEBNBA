@@ -1,3 +1,5 @@
+"use client";
+
 import { dealers, dealerProducts } from '@/data/mock';
 import {
   expandingRadiusSearch,

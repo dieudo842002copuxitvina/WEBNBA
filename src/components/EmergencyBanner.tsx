@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
 import { useControlCenter } from '@/contexts/ControlCenterContext';
 import { EMERGENCY_PRESETS } from '@/lib/emergencyMode';
 import { AlertTriangle, Phone, ArrowRight } from 'lucide-react';
@@ -32,7 +34,7 @@ export default function EmergencyBanner() {
             {GEO_CONFIG.HOTLINE_DISPLAY}
           </a>
           <Link
-            to="/products"
+            href="/san-pham"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-background/20 hover:bg-background/30 text-xs font-semibold"
           >
             Xem ngay <ArrowRight className="w-3.5 h-3.5" />

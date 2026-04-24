@@ -1,12 +1,14 @@
-import { Link } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
 import { Phone, Mail, MapPin, Facebook, Youtube, Sprout } from 'lucide-react';
 import { trackEvent } from '@/lib/tracking';
 
 const SOCIALS = [
   {
     key: 'tiktok',
-    label: 'TikTok Điểu Đơ',
-    href: 'https://www.tiktok.com/@dieudo',
+    label: 'TikTok Nhà Bè Agri',
+    href: 'https://www.tiktok.com/',
     color: 'hover:bg-foreground hover:text-background',
     icon: (
       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden>
@@ -44,7 +46,7 @@ export default function SiteFooter() {
       <div className="container py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Brand */}
         <div>
-          <Link to="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
               <Sprout className="w-5 h-5" />
             </div>
@@ -113,12 +115,12 @@ export default function SiteFooter() {
 
           <nav aria-label="Liên kết nhanh" className="mt-5">
             <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-sm">
-              <li><Link to="/giai-phap" className="text-muted-foreground hover:text-primary transition-colors">Giải pháp</Link></li>
-              <li><Link to="/dai-ly" className="text-muted-foreground hover:text-primary transition-colors">Đại lý</Link></li>
-              <li><Link to="/tin-tuc" className="text-muted-foreground hover:text-primary transition-colors">Tin tức</Link></li>
-              <li><Link to="/thu-vien" className="text-muted-foreground hover:text-primary transition-colors">Kỹ thuật</Link></li>
-              <li><Link to="/tools" className="text-muted-foreground hover:text-primary transition-colors">Công cụ</Link></li>
-              <li><Link to="/lien-he" className="text-muted-foreground hover:text-primary transition-colors">Liên hệ</Link></li>
+              <li><Link href="/giai-phap" className="text-muted-foreground hover:text-primary transition-colors">Giải pháp</Link></li>
+              <li><Link href="/dai-ly" className="text-muted-foreground hover:text-primary transition-colors">Đại lý</Link></li>
+              <li><Link href="/tin-tuc" className="text-muted-foreground hover:text-primary transition-colors">Tin tức</Link></li>
+              <li><Link href="/thu-vien" className="text-muted-foreground hover:text-primary transition-colors">Kỹ thuật</Link></li>
+              <li><Link href="/tools" className="text-muted-foreground hover:text-primary transition-colors">Công cụ</Link></li>
+              <li><Link href="/lien-he" className="text-muted-foreground hover:text-primary transition-colors">Liên hệ</Link></li>
             </ul>
           </nav>
         </div>

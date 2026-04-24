@@ -1,7 +1,9 @@
+"use client";
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, ArrowRight, BookOpen, TrendingUp, Camera } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { trackEvent } from '@/lib/tracking';
 
@@ -160,7 +162,7 @@ function NewsCard({ item, index }: { item: NewsItem; index: number }) {
       transition={{ duration: 0.4, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
       <Link
-        to={`/thu-vien/${item.slug}`}
+        href={`/thu-vien/${item.slug}`}
         onClick={() => trackEvent('news_click', { articleId: item.id, tab: item.tab })}
         className="group block bg-card rounded-2xl overflow-hidden border border-border/60 hover:border-[#2D5A27]/40 hover:shadow-xl transition-all duration-300 h-full"
       >
@@ -223,7 +225,7 @@ export default function AgriNewsBlock() {
           </div>
 
           <Button variant="outline" size="sm" asChild className="hidden md:inline-flex shrink-0 border-[#2D5A27]/40 text-[#2D5A27] hover:bg-[#2D5A27] hover:text-white">
-            <Link to="/tin-tuc">
+            <Link href="/tin-tuc">
               Xem tất cả bài viết <ArrowRight className="ml-1 w-3.5 h-3.5" />
             </Link>
           </Button>
@@ -276,7 +278,7 @@ export default function AgriNewsBlock() {
             asChild
             className="w-full md:w-auto border-[#2D5A27]/40 text-[#2D5A27] hover:bg-[#2D5A27] hover:text-white"
           >
-            <Link to="/tin-tuc">
+            <Link href="/tin-tuc">
               Xem tất cả bài viết <ArrowRight className="ml-1.5 w-4 h-4" />
             </Link>
           </Button>

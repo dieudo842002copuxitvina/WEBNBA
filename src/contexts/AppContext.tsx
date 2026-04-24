@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserRole, CartItem, Product } from '@/data/types';
 import { DEFAULT_LOCATION, type GeoCoord } from '@/lib/geo';

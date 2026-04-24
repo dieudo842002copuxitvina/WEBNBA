@@ -1,7 +1,6 @@
+"use client";
+
 import React, { useState, useMemo, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, MessageCircle, MapPin, Navigation, ArrowRight, ShieldCheck, Building2, Store } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +8,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useFarmerProfile } from '@/hooks/useFarmerProfile';
 import { dealersData, Dealer } from '@/data/dealersData';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
+// --- Dynamic Imports for Leaflet ---
+// We use a local state to ensure these are only used on the client
+let MapContainer: any, TileLayer: any, Marker: any, Popup: any, useMap: any, L: any;
+
+if (typeof window !== 'undefined') {
+  const RL = require('react-leaflet');
+  MapContainer = RL.MapContainer;
+  TileLayer = RL.TileLayer;
+  Marker = RL.Marker;
+  Popup = RL.Popup;
+  useMap = RL.useMap;
+  L = require('leaflet');
+  require('leaflet/dist/leaflet.css');
+}
 
 // --- Map Logic ---
 const CARTO_VOYAGER = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
@@ -17,28 +31,22 @@ const CARTO_VOYAGER = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}
 function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
   useEffect(() => {
-    map.setView(center, zoom, { animate: true, duration: 1.5 });
+    if (map) {
+      map.setView(center, zoom, { animate: true, duration: 1.5 });
+    }
   }, [center, zoom, map]);
   return null;
 }
-
-const createCustomIcon = (color: string) => L.divIcon({
-  html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
-  className: '',
-  iconSize: [12, 12],
-  iconAnchor: [6, 6]
-});
-
-const icons = {
-  'head-office': createCustomIcon('#F59E0B'), // amber
-  'branch': createCustomIcon('#3B82F6'),      // blue
-  'dealer': createCustomIcon('#2D5A27'),      // nature green
-};
 
 export default function MinimalistDealerNetwork() {
   const { profile } = useFarmerProfile();
   const [hoveredDealerId, setHoveredDealerId] = useState<string | null>(null);
   const [mapConfig, setMapConfig] = useState({ center: [10.8231, 106.6297] as [number, number], zoom: 11 });
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Geo-routing: Closest dealers first
   const sortedDealers = useMemo(() => {
@@ -52,6 +60,21 @@ export default function MinimalistDealerNetwork() {
     }).slice(0, 5);
   }, []);
 
+  const icons = useMemo(() => {
+    if (!isClient || !L) return {};
+    const createIcon = (color: string) => L.divIcon({
+      html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
+      className: '',
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+    return {
+      'head-office': createIcon('#F59E0B'),
+      'branch': createIcon('#3B82F6'),
+      'dealer': createIcon('#2D5A27'),
+    };
+  }, [isClient]);
+
   const handleCardHover = (dealer: Dealer) => {
     setHoveredDealerId(dealer.id);
     setMapConfig({ center: [dealer.lat, dealer.lng], zoom: 13 });
@@ -63,6 +86,8 @@ export default function MinimalistDealerNetwork() {
     if (dealer.province.includes('Đồng Nai')) return "Tưới Cao su & Điều";
     return "Tư vấn Kỹ thuật";
   };
+
+  if (!isClient) return <div className="h-[600px] bg-slate-100 animate-pulse rounded-[2.5rem]" />;
 
   return (
     <div className="bg-white/70 backdrop-blur-md rounded-[2.5rem] border border-white/50 shadow-xl shadow-slate-200/50 overflow-hidden">
@@ -172,7 +197,7 @@ export default function MinimalistDealerNetwork() {
           </div>
 
           <div className="p-4 border-t border-slate-100 bg-white/50">
-            <Link to="/dai-ly">
+            <Link href="/dai-ly">
               <Button variant="ghost" className="w-full text-slate-500 hover:text-[#2D5A27] text-xs font-bold group">
                 Xem tất cả 25+ đại lý toàn quốc
                 <ArrowRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />

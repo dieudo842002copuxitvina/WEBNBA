@@ -1,5 +1,8 @@
+"use client";
+
 import { Home, Calculator, Newspaper, MapPin } from 'lucide-react';
-import { NavLink, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +25,7 @@ const items: Item[] = [
  * Glassmorphism background, animated active indicator, 56px touch targets.
  */
 export default function BottomNav() {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
 
   return (
     <nav
@@ -33,12 +36,12 @@ export default function BottomNav() {
       <div className="glass border-t border-border/40 rounded-t-2xl">
         <ul className="grid grid-cols-4">
           {items.map((it) => {
-            const active = it.match ? it.match(pathname) : pathname === it.to;
+            const active = it.match ? it.match(pathname || '/') : pathname === it.to;
             const Icon = it.icon;
             return (
               <li key={it.to}>
-                <NavLink
-                  to={it.to}
+                <Link
+                  href={it.to}
                   onClick={() => {
                     // Smooth scroll to top when switching primary tab
                     if (typeof window !== 'undefined') {
@@ -59,7 +62,7 @@ export default function BottomNav() {
                   )}
                   <Icon className={cn('w-5 h-5', active && 'scale-110 transition-transform')} />
                   <span>{it.label}</span>
-                </NavLink>
+                </Link>
               </li>
             );
           })}

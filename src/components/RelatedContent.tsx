@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -238,7 +240,7 @@ export default function RelatedContent({ productId, productName = '', productCat
               const meta = BUCKET_META[a.bucket];
               const Icon = meta.Icon;
               return (
-                <Link key={a.id} to={`/thu-vien/${a.slug}`} className="group">
+                <Link key={a.id} href={`/thu-vien/${a.slug}`} className="group">
                   <Card className="h-full overflow-hidden hover:shadow-lg hover:border-primary/40 transition-all">
                     <div className="aspect-video bg-muted relative overflow-hidden">
                       {a.cover_image ? (
@@ -288,7 +290,7 @@ export default function RelatedContent({ productId, productName = '', productCat
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {cases.map((c) => (
-              <Link key={c.id} to={`/case-studies/${c.slug}`} className="group">
+              <Link key={c.id} href={`/case-studies/${c.slug}`} className="group">
                 <Card className="h-full overflow-hidden hover:shadow-lg hover:border-primary/40 transition-all">
                   <div className="aspect-video bg-muted relative overflow-hidden">
                     {c.cover_image ? (

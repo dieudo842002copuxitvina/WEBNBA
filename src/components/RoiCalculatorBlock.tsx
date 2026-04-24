@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -17,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TrendingUp, Sparkles, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { trackEvent } from '@/lib/tracking';
 
 /**
@@ -164,7 +166,7 @@ export default function RoiCalculatorBlock() {
                 trackEvent('calculator_used', { tool: 'roi_homepage', area })
               }
             >
-              <Link to="/tools/roi">
+              <Link href="/tools/roi">
                 Tính chi tiết hơn <ArrowRight className="ml-1.5 w-4 h-4" />
               </Link>
             </Button>

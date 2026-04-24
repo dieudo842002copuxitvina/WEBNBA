@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ChevronDown, ChevronRight, Phone, ArrowRight, Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import menuData from '@/data/megaMenuData.json';
@@ -45,7 +47,7 @@ export default function ProductMegaMenu({ isMobile = false, onMobileClose }: Pro
                       {category.subcategories.map((sub) => (
                         <li key={sub.slug}>
                           <Link
-                            to={`/san-pham?category=${sub.slug}&source=megamenu_mobile`}
+                            href={`/san-pham?category=${sub.slug}&source=megamenu_mobile`}
                             onClick={onMobileClose}
                             className="block py-1.5 text-sm text-slate-600 hover:text-primary transition-colors"
                           >
@@ -60,7 +62,7 @@ export default function ProductMegaMenu({ isMobile = false, onMobileClose }: Pro
                 {/* CTA Mobile */}
                 <div className="mt-4 pt-4 border-t border-slate-100">
                   <Link 
-                    to="/lien-he?source=megamenu_mobile_cta" 
+                    href="/lien-he?source=megamenu_mobile_cta" 
                     onClick={onMobileClose}
                     className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100 hover:bg-orange-100 transition-colors"
                   >
@@ -109,7 +111,7 @@ export default function ProductMegaMenu({ isMobile = false, onMobileClose }: Pro
                     {category.subcategories.map((sub) => (
                       <li key={sub.slug}>
                         <Link
-                          to={`/san-pham?category=${sub.slug}&source=megamenu_desktop`}
+                          href={`/san-pham?category=${sub.slug}&source=megamenu_desktop`}
                           className="text-sm text-slate-600 hover:text-primary transition-colors block py-0.5"
                         >
                           {sub.name}
@@ -124,7 +126,7 @@ export default function ProductMegaMenu({ isMobile = false, onMobileClose }: Pro
             {/* CTA Banner O2O Lead - Gắn Tracking Param */}
             <div className="bg-slate-50 border-t border-slate-100 p-4 px-6">
               <Link 
-                to="/lien-he?source=megamenu_desktop_cta" 
+                href="/lien-he?source=megamenu_desktop_cta" 
                 className="flex items-center justify-between group/cta"
               >
                 <div>

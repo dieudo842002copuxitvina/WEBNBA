@@ -1,10 +1,12 @@
+"use client";
+
 import { useEffect, useMemo, useState } from 'react';
 import { products } from '@/data/mock';
 import { useApp } from '@/contexts/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, X, ArrowRight, TrendingUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { trackEvent } from '@/lib/tracking';
 import { fetchPriceTrends, type PriceTrend } from '@/lib/marketPrices';
 
@@ -95,7 +97,7 @@ export default function AIInsightBanner() {
                 {suggested.map((p) => (
                   <Link
                     key={p.id}
-                    to={`/products/${p.slug}`}
+                    href={`/san-pham/${p.slug}`}
                     onClick={() => trackEvent('product_view', { productId: p.id, productName: p.name, source: 'ai_banner_live' })}
                     className="flex items-center gap-2 p-2.5 rounded-lg border bg-card hover:border-primary/40 hover:shadow-sm transition-all group min-h-[56px]"
                   >
@@ -112,10 +114,10 @@ export default function AIInsightBanner() {
 
             <div className="flex flex-wrap gap-2 mt-3">
               <Button size="sm" asChild className="bg-primary hover:bg-primary/90 min-h-[44px]">
-                <Link to="/cong-cu/roi">Tính ROI ngay <ArrowRight className="ml-1 w-3 h-3" /></Link>
+                <Link href="/cong-cu/roi">Tính ROI ngay <ArrowRight className="ml-1 w-3 h-3" /></Link>
               </Button>
               <Button size="sm" variant="outline" asChild className="min-h-[44px]">
-                <Link to="/thi-truong">Xem thị trường</Link>
+                <Link href="/thi-truong">Xem thị trường</Link>
               </Button>
             </div>
           </div>

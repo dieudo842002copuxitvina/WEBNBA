@@ -30,7 +30,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/san-pham/${product.slug}`}
-      onClick={() => trackEvent('product_view', { productId: product.id, productName: product.name, category: product.category })}
+      onClick={() => trackEvent('product_view', { productId: product.id, productName: product.name, category_id: product.category_id })}
     >
       <Card className="group overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-slide-up h-full">
         <div className="aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden relative">
@@ -51,7 +51,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </span>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">{product.category}</p>
+          <p className="text-xs text-muted-foreground">{product.category_id}</p>
           <h3 className="font-display font-semibold text-sm mt-1 line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </h3>
@@ -69,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </p>
               </div>
             ) : (
-              <p className="font-display font-bold text-base">{formatVND(product.basePrice)}</p>
+              <p className="font-display font-bold text-base">{formatVND(product.base_price)}</p>
             )}
             <p className="text-[10px] text-muted-foreground">/{product.unit}</p>
           </div>

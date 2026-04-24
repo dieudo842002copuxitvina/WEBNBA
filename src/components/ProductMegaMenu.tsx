@@ -47,7 +47,7 @@ export default function ProductMegaMenu({ isMobile = false, onMobileClose }: Pro
                       {category.subcategories.map((sub) => (
                         <li key={sub.slug}>
                           <Link
-                            href={`/san-pham?category=${sub.slug}&source=megamenu_mobile`}
+                            href={`/danh-muc/${sub.slug}`}
                             onClick={onMobileClose}
                             className="block py-1.5 text-sm text-slate-600 hover:text-primary transition-colors"
                           >
@@ -111,7 +111,7 @@ export default function ProductMegaMenu({ isMobile = false, onMobileClose }: Pro
                     {category.subcategories.map((sub) => (
                       <li key={sub.slug}>
                         <Link
-                          href={`/san-pham?category=${sub.slug}&source=megamenu_desktop`}
+                          href={`/danh-muc/${sub.slug}`}
                           className="text-sm text-slate-600 hover:text-primary transition-colors block py-0.5"
                         >
                           {sub.name}

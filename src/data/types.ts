@@ -4,14 +4,18 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  category: string;
-  description: string;
-  basePrice: number;
+  sku: string;
+  category_id: string;
+  brand_id: string;
+  base_price: number;
   unit: string;
-  image: string;
-  stock: number;
-  specs: Record<string, string>;
+  description: string;
+  thumbnail: string;
+  gallery: string[];
+  specs: Record<string, any>;
   tags: string[];
+  meta_title?: string;
+  meta_description?: string;
 }
 
 export interface Dealer {
